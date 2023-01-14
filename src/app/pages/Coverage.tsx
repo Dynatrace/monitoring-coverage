@@ -1,5 +1,7 @@
 import React from "react";
 import { Flex, Heading } from "@dynatrace/wave-components-preview";
+import { CloudTable } from "../components/CloudTable";
+import { UnmonitoredHostTable } from "../components/UnmonitoredHostTable";
 
 export const Coverage = () => {
     return (
@@ -10,14 +12,14 @@ export const Coverage = () => {
                     <div>Icon</div>
                     <Heading level={2}>Hybrid Cloud</Heading>
                 </Flex>
-                <div>Cloud table</div>
+                <CloudTable/>
             </Flex>
             <Flex flexDirection="column">
                 <Flex flexDirection="row">
                     <div>Icon</div>
                     <Heading level={2}>Unmonitored Hosts</Heading>
                 </Flex>
-                <div>Unmonitored hosts table</div>
+                <UnmonitoredHostTable/>
             </Flex>
         </Flex>
     )
