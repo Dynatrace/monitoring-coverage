@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import { Data } from './pages/Data';
 import { Header } from './components/Header';
 import { Home } from './pages/Home';
+import { Coverage } from './pages/Coverage';
 
 export const App = () => {
   return (
@@ -13,7 +14,7 @@ export const App = () => {
       </Page.Header>
       <Page.Main>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Coverage />} />
           <Route path="/data" element={<Data />} />
         </Routes>
       </Page.Main>
