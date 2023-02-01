@@ -40,7 +40,12 @@ export function useDQLQuery() {
       setResult(response);
       setError(null);
     } catch (e) {
-      const error = JSON.parse(e.message)?.error;
+      let error;
+      try{
+        error = JSON.parse(e.message)?.error;
+      } catch (parseerror){
+        error = JSON.stringify(e);
+      }
       setVisualRecommendations([]);
       setQueryState('error');
       setResult(undefined);

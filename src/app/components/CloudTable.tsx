@@ -1,13 +1,13 @@
 import React, { useState, useMemo } from "react";
 import { DataTable, Modal, Flex, Button, TableColumn } from "@dynatrace/wave-components-preview";
 
-export const CloudTable = () => {
+export const CloudTable = ({oneAgentHostsQuery, cloudHostsQuery, awsHostsQuery, azureHostsQuery, gcpHostsQuery, vmwareHostsQuery}) => {
   const [modalOpen, setModalOpen] = useState(false);
   const columns = useMemo<TableColumn[]>(
     () => [
       { accessor: "cloud" },
-      { accessor: "status" },
-      { accessor: "hosts" },
+      { accessor: "oneAgentHosts" },
+      { accessor: "cloudHosts" },
       {
         header: "Actions",
         cell: () => {
@@ -27,12 +27,20 @@ export const CloudTable = () => {
     ],
     []
   );
-  const data = [
-    { cloud: "AWS", status: "??", hosts: "??" },
-    { cloud: "Azure", status: "??", hosts: "??" },
-    { cloud: "GCP", status: "??", hosts: "??" },
-    { cloud: "VMWare", status: "??", hosts: "??" },
-  ];
+  const lookup = (query,name) => {
+    //if(!query.result) 
+    return "??"
+    //query.result.
+  }
+  const data = useMemo(()=>{
+    return [
+      { cloud: "AWS", cloudHosts: "??", hosts: awsHostsQuery.result || "??" },
+      { cloud: "Azure", cloudHosts: "??", hosts: azureHostsQuery.result || "??" },
+      { cloud: "GCP", cloudHosts: "??", hosts: gcpHostsQuery.result || "??" },
+      { cloud: "VMWare", cloudHosts: "??", hosts: vmwareHostsQuery.result || "??" },
+    ];
+  },[])
+  
 
   return (
     <div>
