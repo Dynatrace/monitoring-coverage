@@ -8,7 +8,12 @@
       "windows": {
         "command": "npm.cmd"
       },
-      "args": ["run-script", "start", "--", "--no-open"],
+      "args": [
+        "run-script",
+        "start",
+        "--",
+        "--no-open"
+      ],
       "isBackground": true,
       "problemMatcher": {
         "pattern": {
@@ -22,7 +27,7 @@
         "background": {
           "activeOnStart": true,
           "beginsPattern": "Running type checks in the background",
-          "endsPattern": "Built in .+ms"
+          "endsPattern": "Ready for development!"
         }
       }
     }

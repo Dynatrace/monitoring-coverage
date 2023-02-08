@@ -11,7 +11,7 @@
     "lint": "eslint ."
   },
   "devDependencies": {
-    "@dynatrace/dtp-cli": "0.84.4",
+    "@dynatrace/dtp-cli": "0.89.0",
     "@types/node": "^16.11.34",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
@@ -30,10 +30,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@dynatrace-sdk/client-query-v02": "0.4.1",
-    "@dynatrace/sdk-web": "0.6.0",
-    "@dynatrace/wave-components-preview": "0.81.0",
-    "@dynatrace-sdk/navigation": "0.0.10",
+    "@dynatrace-sdk/client-query-v02": "0.4.4",
+    "@dynatrace/sdk-web": "0.7.3",
+    "@dynatrace/wave-components-preview": "0.87.0",
+    "@dynatrace-sdk/navigation": "0.2.5",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "react-router-dom": "^6.2.1"

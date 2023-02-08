@@ -2,9 +2,9 @@ import {
   AppHeader,
   AppName,
   Flex,
-} from '@dynatrace/wave-components-preview/layouts';
-import { Divider } from '@dynatrace/wave-components-preview/typography';
-import { Button } from '@dynatrace/wave-components-preview/buttons';
+  Divider,
+  Button
+} from '@dynatrace/wave-components-preview/';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 

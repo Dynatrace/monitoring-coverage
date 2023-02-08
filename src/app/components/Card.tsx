@@ -1,8 +1,7 @@
 import Borders from '@dynatrace/design-tokens/borders';
 import BoxShadows from '@dynatrace/design-tokens/box-shadows';
 import Colors from '@dynatrace/design-tokens/colors';
-import { Flex } from '@dynatrace/wave-components-preview/layouts';
-import { Link } from '@dynatrace/wave-components-preview/typography';
+import { Flex, Link } from '@dynatrace/wave-components-preview/';
 import { Link as RouterLink } from 'react-router-dom';
 import React from 'react';
 

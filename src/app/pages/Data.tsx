@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import * as Colors from '@dynatrace/design-tokens/colors';
 import { ErrorIcon } from '@dynatrace/react-icons';
-import { Flex } from '@dynatrace/wave-components-preview/layouts';
+import { Flex } from '@dynatrace/wave-components-preview/';
 import {
   Heading,
   Paragraph,

@@ -2,8 +2,8 @@ import {
   Heading,
   Paragraph,
   Strong,
-} from '@dynatrace/wave-components-preview/typography';
-import { Flex } from '@dynatrace/wave-components-preview/layouts';
+  Flex
+} from '@dynatrace/wave-components-preview/';
 import React from 'react';
 import { Card } from '../components/Card';
 import { useCurrentTheme } from '@dynatrace/wave-components-preview';

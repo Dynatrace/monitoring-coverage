@@ -1,4 +1,4 @@
-import { Page } from '@dynatrace/wave-components-preview/layouts';
+import { Page } from '@dynatrace/wave-components-preview';
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Data } from './pages/Data';
