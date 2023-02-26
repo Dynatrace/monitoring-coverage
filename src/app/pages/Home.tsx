@@ -3,10 +3,10 @@ import {
   Paragraph,
   Strong,
   Flex
-} from '@dynatrace/wave-components-preview/';
+} from '@dynatrace/strato-components-preview/';
 import React from 'react';
 import { Card } from '../components/Card';
-import { useCurrentTheme } from '@dynatrace/wave-components-preview';
+import { useCurrentTheme } from '@dynatrace/strato-components-preview';
 
 export const Home = () => {
   const theme = useCurrentTheme();

@@ -4,7 +4,7 @@ import {
   Flex,
   Divider,
   Button
-} from '@dynatrace/wave-components-preview/';
+} from '@dynatrace/strato-components-preview/';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 

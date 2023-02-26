@@ -4,11 +4,11 @@ import {
   QueryResponseV2Beta,
   RecordV2Beta,
 } from '@dynatrace-sdk/client-query-v02';
-import { QueryStateType } from '@dynatrace/wave-components-preview/buttons';
+import { QueryStateType } from '@dynatrace/strato-components-preview/buttons';
 import {
   recommendVisualizations,
   VisualizationKind,
-} from '@dynatrace/wave-components-preview/conversion-utilities';
+} from '@dynatrace/strato-components-preview/conversion-utilities';
 import { useState } from 'react';
 
 /**

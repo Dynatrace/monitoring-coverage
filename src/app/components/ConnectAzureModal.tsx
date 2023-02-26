@@ -1,11 +1,11 @@
 import React, { Dispatch, SetStateAction, useState, useEffect, useMemo } from "react";
-import { Modal, Flex, FormField, TextInput, Button, Link, PasswordInput } from "@dynatrace/wave-components-preview";
+import { Modal, Flex, FormField, TextInput, Button, Link, PasswordInput } from '@dynatrace/strato-components-preview';
 import {
   accessTokensApiTokensClient,
   ApiTokenCreate,
   ApiTokenCreateScopesItem,
 } from "@dynatrace-sdk/client-classic-environment-v2";
-import { ExternalLinkIcon } from "@dynatrace/react-icons";
+import { ExternalLinkIcon } from '@dynatrace/strato-icons';
 import { Cloud } from "../types/CloudTypes";
 import { functions } from "@dynatrace/util-app";
 

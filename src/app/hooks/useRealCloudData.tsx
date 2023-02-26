@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { ErrorV2Beta, queryClient, QueryResponseV2Beta, RecordV2Beta } from "@dynatrace-sdk/client-query-v02";
-import { Cloud } from "../types/CloudTypes";
+import { Cloud, UnmonitoredCloud } from "../types/CloudTypes";
 
 const CLOUDSTUB = [
   {
@@ -80,6 +80,7 @@ export const useRealCloudData = () => {
               | fieldsAdd ip = ipAddress[0]
               | lookup [fetch dt.entity.host | filter in(entityId,entitySelector("type(host),fromRelationships.runsOn(type(virtualmachine))")) | fieldsAdd ip = ipAddress[0]], lookupField: ip, sourceField:ip
               | filter isNull(lookup.ip)
+              | fields entityId, entityName, ipAddress=ip
               | limit 100000`,
       });
 
@@ -89,29 +90,30 @@ export const useRealCloudData = () => {
         setRealCloudData((oldClouds) => {
           const newClouds = [...oldClouds]; //new object to update state
           res.records?.forEach((r) => {
-            switch (r.values.cloud) {
+            const vals = r.values || {};
+            switch (vals.cloud) {
               case "EC2":
                 {
                   const nc = newClouds.find((c) => c.cloudType == "EC2");
-                  if (nc) nc.oneagentHosts = Number(r.values["count()"]);
+                  if (nc) nc.oneagentHosts = Number(vals["count()"]);
                 }
                 break;
               case "GOOGLE_CLOUD_PLATFORM":
                 {
                   const nc = newClouds.find((c) => c.cloudType == "GOOGLE_CLOUD_PLATFORM");
-                  if (nc) nc.oneagentHosts = Number(r.values["count()"]);
+                  if (nc) nc.oneagentHosts = Number(vals["count()"]);
                 }
                 break;
               case "AZURE":
                 {
                   const nc = newClouds.find((c) => c.cloudType == "AZURE");
-                  if (nc) nc.oneagentHosts = Number(r.values["count()"]);
+                  if (nc) nc.oneagentHosts = Number(vals["count()"]);
                 }
                 break;
               case "VMWare":
                 {
                   const nc = newClouds.find((c) => c.cloudType == "VMWare");
-                  if (nc) nc.oneagentHosts = Number(r.values["count()"]);
+                  if (nc) nc.oneagentHosts = Number(vals["count()"]);
                 }
                 break;
             }
@@ -124,11 +126,12 @@ export const useRealCloudData = () => {
         setRealCloudData((oldClouds) => {
           const newClouds = [...oldClouds]; //new object to update state
           res.records?.forEach((r) => {
-            switch (r.values["metric.key"]) {
+            const vals = r.values || {};
+            switch (vals["metric.key"]) {
               case "dt.cloud.aws.ec2.cpu.usage":
                 {
                   const nc = newClouds.find((c) => c.metricKey == "dt.cloud.aws.ec2.cpu.usage");
-                  const num = Number(r.values["count()"]);
+                  const num = Number(vals["count()"]);
                   if (nc) {
                     nc.cloudHosts = num;
                     if (num != null && !isNaN(num)) nc.cloudStatus = true;
@@ -138,7 +141,7 @@ export const useRealCloudData = () => {
               case "dt.cloud.azure.vm.cpu_usage":
                 {
                   const nc = newClouds.find((c) => c.metricKey == "dt.cloud.azure.vm.cpu_usage");
-                  const num = Number(r.values["count()"]);
+                  const num = Number(vals["count()"]);
                   if (nc) {
                     nc.cloudHosts = num;
                     if (num != null && !isNaN(num)) nc.cloudStatus = true;
@@ -150,7 +153,7 @@ export const useRealCloudData = () => {
                   const nc = newClouds.find(
                     (c) => c.metricKey == "cloud.gcp.compute_googleapis_com.guest.cpu.usage_time"
                   );
-                  const num = Number(r.values["count()"]);
+                  const num = Number(vals["count()"]);
                   if (nc) {
                     nc.cloudHosts = num;
                     if (num != null && !isNaN(num)) nc.cloudStatus = true;
@@ -160,7 +163,7 @@ export const useRealCloudData = () => {
               case "dt.cloud.vmware.vm.cpu.usage":
                 {
                   const nc = newClouds.find((c) => c.metricKey == "dt.cloud.vmware.vm.cpu.usage");
-                  const num = Number(r.values["count()"]);
+                  const num = Number(vals["count()"]);
                   if (nc) {
                     nc.cloudHosts = num;
                     if (num != null && !isNaN(num)) nc.cloudStatus = true;
@@ -177,7 +180,7 @@ export const useRealCloudData = () => {
         setRealCloudData((oldClouds) => {
           const newClouds = [...oldClouds]; //new object to update state
           const nc = newClouds.find((c) => c.cloudType == "EC2");
-          if (nc) nc.unmonitoredCloud = res.records as any[];
+          if (nc) nc.unmonitoredCloud = res.records as UnmonitoredCloud[];
           return newClouds;
         });
       },(e)=>setError(e));

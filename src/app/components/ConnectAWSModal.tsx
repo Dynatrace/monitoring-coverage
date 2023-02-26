@@ -9,7 +9,7 @@ import {
   SelectOption,
   SelectedKeys,
   PasswordInput,
-} from "@dynatrace/wave-components-preview";
+} from '@dynatrace/strato-components-preview';
 import { Cloud } from "../types/CloudTypes";
 import { functions } from "@dynatrace/util-app";
 

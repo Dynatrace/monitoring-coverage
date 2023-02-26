@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { DataTable, Modal, Flex, Button, TableColumn } from "@dynatrace/wave-components-preview";
+import { DataTable, Modal, Flex, Button, TableColumn } from '@dynatrace/strato-components-preview';
 
 export const UnmonitoredHostTable = () => {
   const [modalOpen, setModalOpen] = useState(false);

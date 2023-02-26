@@ -1,4 +1,4 @@
-import { Page } from '@dynatrace/wave-components-preview';
+import { Page } from '@dynatrace/strato-components-preview';
 import React,{useState} from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { coreClient } from '@dynatrace-sdk/client-core';

@@ -1,4 +1,4 @@
-import { AppRoot } from '@dynatrace/wave-components-preview/core';
+import { AppRoot } from '@dynatrace/strato-components-preview/core';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';

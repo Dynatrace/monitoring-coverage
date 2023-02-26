@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Flex, Heading, LoadingIndicator, Switch, ToastContainer } from "@dynatrace/wave-components-preview";
+import { Flex, Heading, LoadingIndicator, Switch, ToastContainer } from '@dynatrace/strato-components-preview';
 import { CloudTable } from "../components/CloudTable";
 import { UnmonitoredHostTable } from "../components/UnmonitoredHostTable";
 import { useDQLQuery } from "../hooks/useDQLQuery";

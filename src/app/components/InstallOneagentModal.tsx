@@ -10,7 +10,7 @@ import {
   LoadingIndicator,
   TextInput,
   TextArea,
-} from "@dynatrace/wave-components-preview";
+} from '@dynatrace/strato-components-preview';
 import {
   deploymentClient,
   DownloadLatestAgentInstallerPathOsType,
@@ -20,7 +20,6 @@ import {
   GetAgentInstallerMetaInfoQueryFlavor,
   GetAgentInstallerMetaInfoQueryArch,
   GetAgentInstallerMetaInfoQueryBitness,
-  // InstallerMetaInfoDto,
 } from "@dynatrace-sdk/client-classic-environment-v1";
 import {
   accessTokensApiTokensClient,
@@ -28,7 +27,7 @@ import {
   ApiTokenCreateScopesItem,
 } from "@dynatrace-sdk/client-classic-environment-v2";
 // import { HttpClientResponse } from "@dynatrace-sdk/client-classic-environment-v1/types/packages/http-client/src/";
-import { CopyIcon, DownloadIcon, PlayIcon, CheckmarkIcon } from "@dynatrace/react-icons";
+import { CopyIcon, DownloadIcon, PlayIcon, CheckmarkIcon } from '@dynatrace/strato-icons';
 import { Cloud } from "../types/CloudTypes";
 import { downloadLatestAgentInstaller } from "../Workarounds.js";
 import "./InstallOneagentModal.css";
@@ -42,12 +41,16 @@ export const InstallOneagentModal = ({
   selectedCloud,
   apiUrl,
   gen2Url,
+  demoMode,
+  ips,
 }: {
   modalOpen: boolean;
   setModalOpen;
   selectedCloud?: Cloud;
   apiUrl: string;
   gen2Url: string;
+  demoMode: boolean;
+  ips: string;
 }) => {
   //override broken SDK with workaround
   deploymentClient.downloadLatestAgentInstaller = downloadLatestAgentInstaller;
@@ -68,11 +71,7 @@ export const InstallOneagentModal = ({
   const [networkZone, setNetworkZone] = useState<string | undefined>("");
   const [version, setVersion] = useState<string>("");
   const [token, setToken] = useState<string>("<TOKEN_HERE>");
-  //data memos
-  const ips = useMemo(() => {
-    if (selectedCloud) return selectedCloud?.unmonitoredCloud?.map((sc) => sc.values.ipAddress).join(", ");
-    return "";
-  }, [selectedCloud]);
+  
   useEffect(() => {
     const config: {
       osType: GetAgentInstallerMetaInfoPathOsType;
@@ -99,7 +98,7 @@ export const InstallOneagentModal = ({
     };
     deploymentClient.getAgentInstallerMetaInfo(config).then(
       (value) => {
-        console.log("deploymentClient.getAgentInstallerMetaInfo:", value);
+        // console.log("deploymentClient.getAgentInstallerMetaInfo:", value);
         setVersion(value.latestAgentVersion || "");
       },
       (reason) => {
@@ -121,7 +120,7 @@ export const InstallOneagentModal = ({
     };
     accessTokensApiTokensClient.createApiToken(config).then(
       (value) => {
-        console.log("accessTokensApiTokensClient.createApiToken:", value);
+        // console.log("accessTokensApiTokensClient.createApiToken:", value);
         setToken(value.token || "TOKEN_MISSING");
       },
       (reason) => {
@@ -132,8 +131,8 @@ export const InstallOneagentModal = ({
   }, []);
   const dl1Liner = useMemo(
     () =>
-      `wget -O Dynatrace-OneAgent-${osTypeTxt}-${version}.sh "${gen2Url}/api/v1/deployment/installer/agent/${osType}/${installerType}/latest?arch=${arch}&flavor=default" --header="Authorization: Api-Token ${token}"`,
-    [version, gen2Url, osType, installerType, arch, token, osTypeTxt]
+      `wget -O Dynatrace-OneAgent-${osTypeTxt}-${version}.sh "${gen2Url}/api/v1/deployment/installer/agent/${osType}/${installerType}/latest?arch=${arch}&flavor=default" --header="Authorization: Api-Token ${demoMode ? "<TOKEN_HERE>" : token}"`,
+    [version, gen2Url, osType, installerType, arch, token, osTypeTxt, demoMode]
   );
   const install1Liner = useMemo(
     () =>
@@ -150,25 +149,20 @@ export const InstallOneagentModal = ({
   };
 
   const downloadOneagent = () => {
-    //   debugger;
     setDownloading(true);
     const agentPromise = deploymentClient.downloadLatestAgentInstaller({
       osType: DownloadLatestAgentInstallerPathOsType.Unix,
       installerType: DownloadLatestAgentInstallerPathInstallerType.Default,
     });
 
-    /* eslint-disable */
     agentPromise.then((res: /*Promise<HttpClientResponse>*/ any) => {
-      // debugger;
       try {
         res.response.blob().then((blob) => {
           console.log("client:", blob);
           const blobUrl = window.URL.createObjectURL(new Blob([blob]));
           const dlLink = document.createElement("a");
           dlLink.href = blobUrl;
-          // dlLink.target = "_blank";
           dlLink.download = "oneagent.sh";
-          // dlLink.setAttribute('download','agent.exe');
           document.body.appendChild(dlLink);
           dlLink.click();
           dlLink.parentNode?.removeChild(dlLink);

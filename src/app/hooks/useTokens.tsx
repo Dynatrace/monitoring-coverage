@@ -21,7 +21,7 @@ export const useTokens = () => {
     };
     try {
       const value = await accessTokensApiTokensClient.createApiToken(config);
-      console.log("accessTokensApiTokensClient.createApiToken:", value);
+      // console.log("accessTokensApiTokensClient.createApiToken:", value);
       setConfigToken(value.token || "TOKEN_MISSING");
       return value.token  || "TOKEN_MISSING";
     } catch (reason) {

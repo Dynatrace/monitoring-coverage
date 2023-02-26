@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Cloud } from "../types/CloudTypes";
+import { Cloud, UnmonitoredCloud } from "../types/CloudTypes";
+import { RecordV2Beta, FieldV2BetaType } from "@dynatrace-sdk/client-query-v02";
 
 const DEFAULT_MOCK_CLOUDS = [
   {
@@ -37,14 +38,22 @@ const DEFAULT_MOCK_CLOUDS = [
 ] as Cloud[];
 
 const generateHostData = (count) => {
-  const hosts: unknown[] = [];
+  const hosts: UnmonitoredCloud[] = [];
   for (let i = 0; i < count; i++) {
     hosts.push({
-      entityId: `CLOUDHOST-` + i.toString().padStart(7, "0"),
-      entityName: `cloud_` + i.toString().padStart(3, "0"),
-      detectedName: `cloud_` + i.toString().padStart(3, "0"),
-      ipAddress: `10.0.0.` + i,
-    });
+      values: {
+        entityId: `CLOUDHOST-` + i.toString().padStart(7, "0"),
+        entityName: `cloud_` + i.toString().padStart(3, "0"),
+        detectedName: `cloud_` + i.toString().padStart(3, "0"),
+        ipAddress: `10.0.${(i / 254).toFixed(0)}.${i % 254 + 1}`,
+      },
+      fields: [
+        { name: "entityId", type: "string" as FieldV2BetaType },
+        { name: "entityName", type: "string" as FieldV2BetaType },
+        { name: "detectedName", type: "string" as FieldV2BetaType },
+        { name: "ipAddress", type: "string" as FieldV2BetaType },
+      ],
+    } as UnmonitoredCloud);
   }
   return hosts;
 };

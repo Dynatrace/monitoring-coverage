@@ -4,18 +4,18 @@ import {
   Flex,
   Button,
   TableColumn,
-  convertToColumns,
-  convertToColumnsFromWellFormedArray,
   Menu,
-} from "@dynatrace/wave-components-preview";
-import { SyncOffIcon, SyncDoneIcon, SyncIcon, DotMenuIcon } from "@dynatrace/react-icons";
-import { Colors } from "@dynatrace/design-tokens";
+  TABLE_EXPANDABLE_DEFAULT_COLUMN,
+} from "@dynatrace/strato-components-preview";
+import { SyncOffIcon, SyncDoneIcon, SyncIcon, DotMenuIcon } from "@dynatrace/strato-icons";
+import { Colors } from "@dynatrace/strato-design-tokens";
 import { ConnectCloudModal } from "./ConnectCloudModal";
 import { InstallOneagentModal } from "./InstallOneagentModal";
 import { Cloud } from "../types/CloudTypes";
 import "./CloudTable.css";
 import { ConnectAWSModal } from "./ConnectAWSModal";
 import { ConnectAzureModal } from "./ConnectAzureModal";
+import { HostsTable } from "./HostsTable";
 
 // const iconStyle = {
 //   height: 20,
@@ -59,6 +59,11 @@ export const CloudTable = ({
   const [cloudModalOpen, setCloudModalOpen] = useState(false);
   const [oneagentModalOpen, setOneagentModalOpen] = useState(false);
   const [selectedCloud, setSelectedCloud] = useState<Cloud>();
+  const [ips, setIps] = useState<string>("");
+  useEffect(() => {
+    if (selectedCloud) setIps(selectedCloud?.unmonitoredCloud?.map((sc) => sc.values?.ipAddress).join(", "));
+    else setIps("");
+  }, [selectedCloud]);
 
   useEffect(() => {
     if (!cloudModalOpen)
@@ -69,6 +74,9 @@ export const CloudTable = ({
 
   const columns = useMemo<TableColumn[]>(
     () => [
+      {
+        ...TABLE_EXPANDABLE_DEFAULT_COLUMN,
+      },
       {
         accessor: "cloud",
         header: "Cloud provider",
@@ -84,6 +92,7 @@ export const CloudTable = ({
       {
         accessor: "cloudStatus",
         header: "Cloud status",
+        width: 100,
         cell: ({ row }) => {
           if (row.original.cloudStatus)
             return (
@@ -104,7 +113,7 @@ export const CloudTable = ({
       {
         accessor: "cloudHosts",
         header: "Cloud hosts",
-        autoWidth: true,
+        width: 100,
         cell: ({ value }) => {
           if (value != null && !isNaN(value)) return <span>{value}</span>;
           else return <span>-</span>;
@@ -113,18 +122,17 @@ export const CloudTable = ({
       {
         accessor: "oneagentHosts",
         header: "OneAgent hosts",
-        autoWidth: true,
+        width: 100,
         cell: ({ value, row }) => {
           if (value != null && !isNaN(value)) return <span>{value}</span>;
           else {
-            // console.log("column oneagentHosts null/NaN:",row.original);
             return <span>-</span>;
           }
         },
       },
       {
         header: "OneAgent coverage",
-        autoWidth: true,
+        width: 120,
         cell: ({ row }) => {
           const coverage = coverageRatio(row);
           if (coverage > 100) return <span style={warningText}>&gt; 100%</span>;
@@ -134,7 +142,7 @@ export const CloudTable = ({
       },
       {
         header: "Priority",
-        autoWidth: true,
+        width: 100,
         cell: ({ row }) => {
           const coverage = coverageRatio(row);
           if (!row.original.cloudStatus && row.original.oneagentHosts > 0)
@@ -148,11 +156,11 @@ export const CloudTable = ({
       },
       {
         header: "Actions",
-        autoWidth: true,
+        width: 190,
         cell: ({ row }) => {
           if (!row.original.cloudStatus || coverageRatio(row) > 100)
             return (
-              <Flex minWidth={200}>
+              <Flex minWidth={190}>
                 <Button
                   className="connectCloud"
                   fullWidth
@@ -182,7 +190,7 @@ export const CloudTable = ({
                 >
                   <span>
                     <img src="./assets/oneagent.svg" className="iconStyle" />
-                    Install OneAgent
+                    Install OneAgents
                   </span>
                 </Button>
               </Flex>
@@ -192,8 +200,8 @@ export const CloudTable = ({
       },
       {
         header: " ",
-        autoWidth: true,
-        cell: (row) => {
+        width: 50,
+        cell: ({ row }) => {
           return (
             <Menu>
               <Menu.Trigger>
@@ -202,7 +210,8 @@ export const CloudTable = ({
               <Menu.Content>
                 <Menu.Item
                   onSelect={() => {
-                    /* Trigger logic goes here */
+                    setSelectedCloud(row.original);
+                    setCloudModalOpen(true);
                   }}
                 >
                   <Menu.ItemIcon>
@@ -212,13 +221,14 @@ export const CloudTable = ({
                 </Menu.Item>
                 <Menu.Item
                   onSelect={() => {
-                    /* Trigger logic goes here */
+                    setSelectedCloud(row.original);
+                    setOneagentModalOpen(true);
                   }}
                 >
                   <Menu.ItemIcon>
                     <img src="./assets/oneagent.svg" className="iconStyle" />
                   </Menu.ItemIcon>
-                  Install OneAgent
+                  Install OneAgents
                 </Menu.Item>
               </Menu.Content>
             </Menu>
@@ -230,27 +240,23 @@ export const CloudTable = ({
   );
 
   const tableData = useMemo<Cloud[]>(() => {
-    console.log("useMemo:", data);
+    // console.log("useMemo:", data);
     return data;
   }, [data]);
 
   return (
-    <div>
-      <DataTable columns={columns} data={tableData} variant="default">
+    <div className="cloudTable">
+      <DataTable
+        columns={columns}
+        data={tableData}
+        variant={{ contained: true, rowSeparation: "horizontalDividers", verticalDividers: true }}
+        resizable={true}
+      >
         <DataTable.ExpandableRow>
           {({ row }) => {
             if (Array.isArray(row.unmonitoredCloud) && row.unmonitoredCloud.length > 0) {
               return (
-                <DataTable
-                  data={row.unmonitoredCloud}
-                  columns={
-                    demoMode
-                      ? convertToColumnsFromWellFormedArray(row.unmonitoredCloud)
-                      : convertToColumns(row.unmonitoredCloud)
-                  }
-                >
-                  <DataTable.Pagination />
-                </DataTable>
+                <HostsTable unmonitoredCloud={row.unmonitoredCloud} setIps={setIps} setOneagentModalOpen={setOneagentModalOpen}/>
               );
             } else
               return (
@@ -298,6 +304,8 @@ export const CloudTable = ({
         selectedCloud={selectedCloud}
         apiUrl={apiUrl}
         gen2Url={gen2Url}
+        demoMode={demoMode}
+        ips={ips}
       />
     </div>
   );
