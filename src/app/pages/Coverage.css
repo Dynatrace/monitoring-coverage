@@ -1,3 +1,47 @@
 span.tinyText {
-    font-size: small;
+  font-size: small;
+}
+
+img.iconStyle {
+  height: 20px;
+  width: 20px;
+  padding-right: 5px;
+  vertical-align: middle;
+}
+
+button {
+  margin-right: 10px;
+}
+td button {
+  min-width: 150px;
+  text-align: center;
+}
+
+.copyButton, .dlButton {
+  width: 150px;
+}
+
+button.caret-button {
+  width: 32px;
+}
+
+button.caret-button .button-children{
+  text-overflow: clip;
+  transition: .125s;
+}
+
+button.caret-button.open .button-children {
+  transform: rotate(90deg);
+}
+
+input {
+  width: 200px;
+}
+
+select, button.select-button {
+  width: 290px;
+}
+
+textarea[readonly]:hover {
+  cursor: text;
 }
