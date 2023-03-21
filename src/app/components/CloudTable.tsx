@@ -17,13 +17,6 @@ import { ConnectAWSModal } from "./ConnectAWSModal";
 import { ConnectAzureModal } from "./ConnectAzureModal";
 import { HostsTable } from "./HostsTable";
 
-// const iconStyle = {
-//   height: 20,
-//   width: 20,
-//   paddingRight: 5,
-//   verticalAlign: "middle",
-// };
-
 const criticalText = {
   color: Colors.Text.Critical.Default,
 };
@@ -42,7 +35,6 @@ export const CloudTable = ({
   fetchQueries,
   demoMode,
   setMockCloudData,
-  runningDQL,
   configToken,
   getConfigToken,
 }: {
@@ -123,7 +115,7 @@ export const CloudTable = ({
         accessor: "oneagentHosts",
         header: "OneAgent hosts",
         width: 100,
-        cell: ({ value, row }) => {
+        cell: ({ value }) => {
           if (value != null && !isNaN(value)) return <span>{value}</span>;
           else {
             return <span>-</span>;
@@ -147,10 +139,12 @@ export const CloudTable = ({
           const coverage = coverageRatio(row);
           if (!row.original.cloudStatus && row.original.oneagentHosts > 0)
             return <span style={criticalText}>Critical</span>;
+          if (coverage > 100)
+            return <span style={criticalText}>Critical</span>;
           if (coverage == 100) return <span>-</span>;
           if (coverage >= 90) return <span>Low</span>;
           if (coverage > 70) return <span>Medium</span>;
-          if (coverage > 0) return <span style={warningText}>High</span>;
+          if (coverage >= 0) return <span style={warningText}>High</span>;
           return <span>-</span>;
         },
       },

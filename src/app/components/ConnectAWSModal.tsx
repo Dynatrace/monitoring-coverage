@@ -9,6 +9,7 @@ import {
   SelectOption,
   SelectedKeys,
   PasswordInput,
+  useToastNotification,
 } from '@dynatrace/strato-components-preview';
 import { Cloud } from "../types/CloudTypes";
 import { functions } from "@dynatrace/util-app";
@@ -42,6 +43,7 @@ export const ConnectAWSModal = ({
   const [partition, setPartition] = useState<SelectedKeys | null>(["AWS_DEFAULT"]);
   const [accessKeyId, setAccessKeyId] = useState("");
   const [secretKeyId, setSecretKeyId] = useState("");
+  const { showToast } = useToastNotification();
 
   const realConnect = async () => {
     console.log("CloudConnectModal (real):", { name, auth, role, accountId, externalId, accessKeyId, secretKeyId });
@@ -82,9 +84,20 @@ export const ConnectAWSModal = ({
       .then((result) => {
         console.log("gen-2-proxy success:", result);
         if (result.data) {
+          showToast({
+            title: 'Cloud connection created',
+            type: 'info',
+            message: `Successfully created connection to ${selectedCloud?.cloud}. ${JSON.stringify(result.data)}`,
+            lifespan: 4000,
+          })
           setModalOpen(false);
         } else if (result.error) {
           console.warn("gen-2-proxy failure:", result.error);
+          showToast({
+            title: 'Cloud connection could not be created',
+            type: 'critical',
+            message: `Failed to create connection to ${selectedCloud?.cloud}. ${result.data}`,
+          })
         }
       });
   };
@@ -97,7 +110,13 @@ export const ConnectAWSModal = ({
       if (selectedCloud) selectedCloud.cloudHosts = Math.round((1 + Math.random()) * selectedCloud.oneagentHosts);
       return [...oldData];
     });
-
+    
+    showToast({
+      title: '(mock) Cloud connection created',
+      type: 'info',
+      message: `Successfully created connection to ${selectedCloud?.cloud}`,
+      lifespan: 4000,
+    })
     setModalOpen(false);
   };
 

@@ -1,48 +1,7 @@
-import React, { Dispatch, SetStateAction, useState, useEffect, useMemo } from "react";
-import { Modal, Flex, FormField, TextInput, Button, Link, PasswordInput } from '@dynatrace/strato-components-preview';
-import {
-  accessTokensApiTokensClient,
-  ApiTokenCreate,
-  ApiTokenCreateScopesItem,
-} from "@dynatrace-sdk/client-classic-environment-v2";
-import { ExternalLinkIcon } from '@dynatrace/strato-icons';
+import React, { Dispatch, SetStateAction, useState, } from "react";
+import { Modal, Flex, FormField, TextInput, Button, PasswordInput, useToastNotification, } from '@dynatrace/strato-components-preview';
 import { Cloud } from "../types/CloudTypes";
 import { functions } from "@dynatrace/util-app";
-
-const SAMPLE_AZURE = {
-  label: "SL4YrPIQ5byopWRpxpjem+-+zrZHi R7Tuq",
-  appId: "string",
-  directoryId: "string",
-  key: "string",
-  active: true,
-  autoTagging: true,
-  // "monitorOnlyTaggedEntities": true,
-  // "monitorOnlyTagPairs": [
-  //   {
-  //     "name": "string",
-  //     "value": "string"
-  //   }
-  // ],
-  // "monitorOnlyExcludingTagPairs": [
-  //   {
-  //     "name": "string",
-  //     "value": "string"
-  //   }
-  // ],
-  // "supportingServices": [
-  //   {
-  //     "name": "string",
-  //     "monitoredMetrics": [
-  //       {
-  //         "name": "string",
-  //         "dimensions": [
-  //           "string"
-  //         ]
-  //       }
-  //     ]
-  //   }
-  // ]
-};
 
 export const ConnectAzureModal = ({
   modalOpen,
@@ -69,6 +28,7 @@ export const ConnectAzureModal = ({
   const [clientId, setClientId] = useState("");
   const [tenantId, setTenantId] = useState("");
   const [secretKey, setSecretKey] = useState("");
+  const { showToast } = useToastNotification();
 
   const realConnect = async () => {
     console.log("CloudConnectModal (real):", { name, clientId, tenantId, secretKey });
@@ -98,9 +58,20 @@ export const ConnectAzureModal = ({
       .then((result) => {
         console.log("gen-2-proxy success:", result);
         if (result.data) {
+          showToast({
+            title: 'Cloud connection created',
+            type: 'info',
+            message: `Successfully created connection to ${selectedCloud?.cloud}. ${JSON.stringify(result.data)}`,
+            lifespan: 4000,
+          })
           setModalOpen(false);
         } else if (result.error) {
           console.warn("gen-2-proxy failure:", result.error);
+          showToast({
+            title: 'Cloud connection could not be created',
+            type: 'critical',
+            message: `Failed to create connection to ${selectedCloud?.cloud}. ${result.data}`,
+          })
         }
       });
   };
@@ -114,6 +85,12 @@ export const ConnectAzureModal = ({
       return [...oldData];
     });
 
+    showToast({
+      title: '(mock) Cloud connection created',
+      type: 'info',
+      message: `Successfully created connection to ${selectedCloud?.cloud}`,
+      lifespan: 4000,
+    })
     setModalOpen(false);
   };
 

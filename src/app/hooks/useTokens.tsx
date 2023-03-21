@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useToastNotification } from "@dynatrace/strato-components-preview";
 import {
   accessTokensApiTokensClient,
   ApiTokenCreate,
@@ -7,6 +8,7 @@ import {
 
 export const useTokens = () => {
   const [configToken, setConfigToken] = useState<string | undefined>();
+  const { showToast } = useToastNotification();
 
   const getConfigToken: () => Promise<string> = async () => {
     const config: {
@@ -26,6 +28,11 @@ export const useTokens = () => {
       return value.token  || "TOKEN_MISSING";
     } catch (reason) {
       console.warn("accessTokensApiTokensClient.createApiToken failed:", reason.message, reason.response.url);
+      showToast({
+        title: "Creating API token failed",
+        type: "critical",
+        message: reason.message,
+      });
       setConfigToken("TOKEN_MISSING");
       return "TOKEN_MISSING";
     }

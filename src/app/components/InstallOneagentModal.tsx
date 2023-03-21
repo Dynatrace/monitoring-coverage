@@ -10,6 +10,7 @@ import {
   LoadingIndicator,
   TextInput,
   TextArea,
+  useToastNotification,
 } from '@dynatrace/strato-components-preview';
 import {
   deploymentClient,
@@ -34,7 +35,6 @@ import "./InstallOneagentModal.css";
 
 const TEXTCOLS = 80;
 
-//TODO: refactor to move all this API logic to a hook
 export const InstallOneagentModal = ({
   modalOpen,
   setModalOpen,
@@ -71,6 +71,7 @@ export const InstallOneagentModal = ({
   const [networkZone, setNetworkZone] = useState<string | undefined>("");
   const [version, setVersion] = useState<string>("");
   const [token, setToken] = useState<string>("<TOKEN_HERE>");
+  const { showToast } = useToastNotification();
   
   useEffect(() => {
     const config: {
@@ -103,6 +104,11 @@ export const InstallOneagentModal = ({
       },
       (reason) => {
         console.warn("getAgentInstallerMetaInfo failed:", reason.message, reason.response.url);
+        showToast({
+          title: "Fetch installer metainfo failed",
+          type: "critical",
+          message: reason.message,
+        });
         setVersion("NOT_FOUND");
       }
     );
@@ -125,6 +131,11 @@ export const InstallOneagentModal = ({
       },
       (reason) => {
         console.warn("accessTokensApiTokensClient.createApiToken failed:", reason.message, reason.response.url);
+        showToast({
+          title: "Create download token failed",
+          type: "critical",
+          message: reason.message,
+        });
         setToken("TOKEN_MISSING");
       }
     );
@@ -170,6 +181,11 @@ export const InstallOneagentModal = ({
         });
       } catch (e) {
         console.warn("agent download failed:", e);
+        showToast({
+          title: "Agent download failed",
+          type: "warning",
+          message: e.message,
+        });
         setDownloading(false);
       }
     });

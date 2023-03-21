@@ -12,7 +12,7 @@ import "./Coverage.css";
 export const Coverage = ({ apiUrl, gen2Url }) => {
   const [demoMode, setDemoMode] = useState(true);
   const { mockCloudData, setMockCloudData } = useMockCloudData();
-  const { realCloudData, fetchQueries, error, runningDQL } = useRealCloudData();
+  const { realCloudData, fetchQueries, runningDQL } = useRealCloudData();
   const {configToken, getConfigToken} = useTokens();
 
   useEffect(() => {
@@ -22,7 +22,6 @@ export const Coverage = ({ apiUrl, gen2Url }) => {
 
   return (
     <Flex flexDirection="column">
-      {error && <ToastContainer>{error}</ToastContainer>}
       <Flex flexDirection="row" justifyContent="space-between">
         <Heading level={5}>Monitoring Coverage</Heading>
         <span className="tinyText">{demoMode ? "(showing mock data)" : ""}</span>

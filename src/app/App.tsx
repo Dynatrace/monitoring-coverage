@@ -1,4 +1,4 @@
-import { Page } from '@dynatrace/strato-components-preview';
+import { Page, ToastContainer } from '@dynatrace/strato-components-preview';
 import React,{useState} from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { coreClient } from '@dynatrace-sdk/client-core';
@@ -25,6 +25,7 @@ export const App = () => {
           <Route path="/data" element={<Data />} />
         </Routes>
       </Page.Main>
+      <ToastContainer/>
     </Page>
   );
 };

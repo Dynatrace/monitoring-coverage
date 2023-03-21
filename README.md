@@ -1,7 +1,18 @@
-# Monitoring Coverage tutorial app
+# Monitoring Coverage Sample App
 
 This is a project to demonstrate how to use DQL to query the entity model, visualize the data, and take action.
-The app helps users understand what hosts are _not_ monitored by Dynatrace today.
+The app helps users understand which hosts are _not_ monitored by Dynatrace today.
+
+## Support
+Please note that the app is intended mostly for educational purposes and should not be used as-is for production scenarios. It is covered under the “light support” provisions of the Dynatrace terms and conditions.
+
+## TL;DR
+You can start using this Sample App now:
+1. Clone this repo to your localhost
+2. Edit `dtp.config.ts` to point to your environment
+3. Deploy using `npx dtp-cli deploy`
+
+Or, keep reading to understand how to modify this app for your own purposes or build your own.
 
 # Let's find the data with DQL
 
@@ -13,7 +24,7 @@ Before we get into Monitoring Candidates, we need to make sure relavent Hybridcl
 
 ### Which clouds are we using?
 
-Let's start by finding out which clouds Dynatrace has detected we're using:
+Let's start by finding out the number of OneAgent hosts for each cloud using:
 
 ```
 fetch dt.entity.host
@@ -22,17 +33,22 @@ fetch dt.entity.host
 | summarize by:{cloudType}, count()
 ```
 
-We can see from the results that Dynatrace uses `EC2`, `AZURE`, and `GOOGLE_CLOUD_PLATFORM` for AWS, Azure, and GCP.
+We can see from the results that Dynatrace uses `EC2`, `AZURE`, and `GOOGLE_CLOUD_PLATFORM`, `VMWARE` for AWS, Azure, GCP, and VMWare.
 
-### Are integrations enabled for our clouds?
+<!--### Are integrations enabled for our clouds?
 
-<magic/>
+<magic/>-->
 
-## Unmonitored Hosts
+## Cloud Hosts
 
-Now let's find out what hosts we know about through the cloud integrations but do not yet have a OneAgent.
+Now let's find out how many hosts we know about through the cloud integrations and also get a list of them filtered by which are not related to a OneAgent host:
 
 ### EC2s
+```
+fetch dt.entity.EC2_INSTANCE
+| filter arn != ""
+| summarize count(), alias:num
+```
 
 ```
 fetch dt.entity.EC2_INSTANCE
@@ -41,6 +57,10 @@ fetch dt.entity.EC2_INSTANCE
 ```
 
 ### Azure VMs
+```
+fetch dt.entity.azure_vm
+| summarize count(), alias:num
+```
 
 ```
 fetch dt.entity.azure_vm
@@ -49,24 +69,35 @@ fetch dt.entity.azure_vm
 ```
 
 ### GCP CE VMs
-
-Pending `lookup`:
+```
+fetch \`dt.entity.cloud:gcp:gce_instance\`
+| summarize count(), alias:num
+```
 
 ```
-fetch `dt.entity.cloud:gcp:gce_instance`
-| fieldsAdd instanceId = instance_id OR entityName
-| lookup [fetch `dt.entity.host` | filter gceInstanceId <> "" |fieldsAdd instance_id=gceInstanceId, hostEntityId = entityId], lookupFIeld: hostEntityId, sourceField:instance_id
-| filter lookup.hostEntityId == ""
-| fieldsAdd ipAddress
+fetch `fetch \`dt.entity.cloud:gcp:gce_instance\`
+| lookup [fetch \`dt.entity.host\` 
+  | filter gceInstanceId <> "" 
+  | fieldsAdd instance_id=gceInstanceId], lookupField: gceInstanceId, sourceField:entityName
+| filter isNull(lookup.entityId)
+//| fieldsAdd ipAddress
 ```
 
 ### VMWare VMs
-Pending `lookup`:
 ```
 fetch dt.entity.virtualmachine
-| fieldsAdd ipAddress[0]
-| lookup [fetch dt.entity.host | filter in(entityId,entitySelector("type(host),fromRelationships.runsOn(type(virtualmachine))")) | fieldsAdd ip = ipAddress[0]], lookupField: ip, sourceField:ip
-| filter lookup.ip == ""
+| summarize count(), alias:num
+```
+
+```
+fetch dt.entity.virtualmachine
+| fieldsAdd ip = ipAddress[0]
+| lookup [fetch dt.entity.host 
+  | filter in(entityId,entitySelector("type(host),fromRelationships.runsOn(type(virtualmachine))")) 
+  | fieldsAdd ip = ipAddress[0]], lookupField: ip, sourceField:ip
+| filter isNull(lookup.ip)
+| fields entityId, entityName, ipAddress=ip
+| limit 100000
 ```
 
 # Let's build an app
@@ -185,23 +216,35 @@ Let's also replace the placeholders `<div>`s in our page with our new components
 
 ## Create hooks for our data
 
-A hook allows us to change our app's state based on our process for getting the data. The template already includes a `useDQLQuery` hook which we can adapt, or we could create our own. For simplicity, let's use the one we already have and call it multiple times.
+A hook allows us to change our app's state based on our process for getting the data. The template already includes a `useDQLQuery` hook which we could adapt, or we can create our own. For simplicity, let's create our own called `useRealCloudData` and use `queryClient` to execute DQL.
 ```
-//  const { error, result, fetchQuery, queryState, visualRecommendations } = useDQLQuery();
-    const cloudsQuery = useDQLQuery();
-    const awsHostsQuery = useDQLQuery();
-    const azureHostsQuery = useDQLQuery();
-    const gcpHostsQuery =  useDQLQuery();
-    const vmwareHostsQuery = useDQLQuery();
+const fetchQueries = () => {
+    try {
+      setRunningDQL(true);
+      const oneAgentHostsQuery = queryClient.query({
+        //get the number of hosts with OneAgents, split by cloud
+        query: `fetch dt.entity.host
+              | filter cloudType <> "" OR hypervisorType == "VMWARE"
+              | fieldsAdd cloud = if(cloudType <> "", cloudType, else:"VMWare")
+              | summarize by:{cloud}, count()`,
+      });
+      ...
 ```
-Now we want to run each of the queries when the component is loaded, but only once. We'll use React's built-in hook `useEffect` for this:
+
+Now we'll call `useRealCloudData` in our Coverage page and pass the data to our tables:
 ```
-useEffect(()=>{
-        cloudsQuery.fetchQuery(...);
-        awsHostsQuery.fetchQuery(...);
-        azureHostsQuery.fetchQuery(...);
-        gcpHostsQuery.fetchQuery(...);
-        vmwareHostsQuery.fetchQuery(...);
-    },[])
+const { realCloudData, fetchQueries, runningDQL } = useRealCloudData();
 ```
-The empty dependency brackets in `useEffect` tells to run only once when the component is first loaded. For `fetchQuery` we'll use the DQL queries from our Notebook.
+
+```
+<Flex flexDirection="column">
+  <CloudTable
+    data={demoMode ? mockCloudData : realCloudData}
+    fetchQueries={fetchQueries}
+    demoMode={demoMode}
+    runningDQL={runningDQL}
+  />
+</Flex>
+```
+
+Now you should be able to run the app again and see real Smartscape data from DQL!

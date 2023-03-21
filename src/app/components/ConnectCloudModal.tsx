@@ -83,11 +83,13 @@ export const ConnectCloudModal = ({
         </Flex>
         {demoMode && (
           <div>
-            <FormField label="API URL">
-              <TextInput placeholder="https://xxx.xxxxxxxx.xxx/xxx" value={cloudUrl} onChange={setCloudUrl} />
-            </FormField>
-            <FormField label="API Key">
-              <TextInput placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxx" value={cloudKey} onChange={setCloudKey} />
+            <FormField label="(Mock)">
+              <FormField label="API URL">
+                <TextInput placeholder="https://xxx.xxxxxxxx.xxx/xxx" value={cloudUrl} onChange={setCloudUrl} />
+              </FormField>
+              <FormField label="API Key">
+                <TextInput placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxx" value={cloudKey} onChange={setCloudKey} />
+              </FormField>
             </FormField>
           </div>
         )}
