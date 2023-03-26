@@ -13,6 +13,7 @@ import {
 } from '@dynatrace/strato-components-preview';
 import { Cloud } from "../types/CloudTypes";
 import { functions } from "@dynatrace/util-app";
+import {generateHostData} from "../hooks/useMockCloudData";
 
 export const ConnectAWSModal = ({
   modalOpen,
@@ -106,8 +107,15 @@ export const ConnectAWSModal = ({
     console.log("CloudConnectModal (mock):", { name, auth, role, accountId, externalId, accessKeyId, secretKeyId });
     //Update mock data
     setMockCloudData((oldData) => {
-      if (selectedCloud) selectedCloud.cloudStatus = true;
-      if (selectedCloud) selectedCloud.cloudHosts = Math.round((1 + Math.random()) * selectedCloud.oneagentHosts);
+      if (selectedCloud) {
+        selectedCloud.cloudStatus = true;
+        selectedCloud.cloudHosts = Math.round((1 + Math.random()) * selectedCloud.oneagentHosts);
+        selectedCloud.unmonitoredCloud = generateHostData(
+          selectedCloud.cloudHosts - selectedCloud.oneagentHosts,
+          "NEWCLOUDHOST",
+          "newcloud"
+        );
+      }
       return [...oldData];
     });
     

@@ -29,7 +29,7 @@ import {
 } from "@dynatrace-sdk/client-classic-environment-v2";
 // import { HttpClientResponse } from "@dynatrace-sdk/client-classic-environment-v1/types/packages/http-client/src/";
 import { CopyIcon, DownloadIcon, PlayIcon, CheckmarkIcon } from '@dynatrace/strato-icons';
-import { Cloud } from "../types/CloudTypes";
+import { Cloud, UnmonitoredCloud } from "../types/CloudTypes";
 import { downloadLatestAgentInstaller } from "../Workarounds.js";
 import "./InstallOneagentModal.css";
 
@@ -43,6 +43,7 @@ export const InstallOneagentModal = ({
   gen2Url,
   demoMode,
   ips,
+  setMockCloudData,
 }: {
   modalOpen: boolean;
   setModalOpen;
@@ -51,6 +52,7 @@ export const InstallOneagentModal = ({
   gen2Url: string;
   demoMode: boolean;
   ips: string;
+  setMockCloudData: React.Dispatch<React.SetStateAction<Cloud[]>>;
 }) => {
   //override broken SDK with workaround
   deploymentClient.downloadLatestAgentInstaller = downloadLatestAgentInstaller;
@@ -72,7 +74,7 @@ export const InstallOneagentModal = ({
   const [version, setVersion] = useState<string>("");
   const [token, setToken] = useState<string>("<TOKEN_HERE>");
   const { showToast } = useToastNotification();
-  
+
   useEffect(() => {
     const config: {
       osType: GetAgentInstallerMetaInfoPathOsType;
@@ -199,6 +201,15 @@ export const InstallOneagentModal = ({
   const copyInstall1Liner = () => {
     navigator.clipboard.writeText(install1Liner);
     setInstall1LinerCopied(true);
+    if(demoMode){
+      setMockCloudData((oldData) => {
+        if (selectedCloud) {
+          selectedCloud.oneagentHosts = selectedCloud.cloudHosts;
+          selectedCloud.unmonitoredCloud = [] as UnmonitoredCloud[];
+        }
+        return [...oldData];
+      });
+    }
   };
 
   const selectOsType = (selectedKeys, selectedValues: string) => {

@@ -24,6 +24,9 @@ const criticalText = {
 const warningText = {
   color: Colors.Text.Warning.Default,
 };
+const successText = {
+  color: Colors.Text.Success.Default,
+};
 
 const coverageRatio = (row) =>
   row.original.cloudStatus ? ((row.original.oneagentHosts || 0) / row.original.cloudHosts) * 100 : NaN;
@@ -93,6 +96,13 @@ export const CloudTable = ({
                 <span>Connected</span>
               </span>
             );
+          else if (row.original.oneagentHosts > 0)
+            return (
+              <span style={criticalText}>
+                <SyncOffIcon />
+                <span>Not setup</span>
+              </span>
+            );
           else
             return (
               <span>
@@ -127,7 +137,9 @@ export const CloudTable = ({
         width: 120,
         cell: ({ row }) => {
           const coverage = coverageRatio(row);
-          if (coverage > 100) return <span style={warningText}>&gt; 100%</span>;
+          if (coverage > 100) return <span style={criticalText}>&gt; 100%</span>;
+          if (coverage == 100) return <span style={successText}>100%</span>;
+          if (!isNaN(coverage) && coverage < 90) return <span style={warningText}>{coverage.toFixed(0)}%</span>;
           if (!isNaN(coverage)) return <span>{coverage.toFixed(0)}%</span>;
           return <span>-</span>;
         },
@@ -139,8 +151,7 @@ export const CloudTable = ({
           const coverage = coverageRatio(row);
           if (!row.original.cloudStatus && row.original.oneagentHosts > 0)
             return <span style={criticalText}>Critical</span>;
-          if (coverage > 100)
-            return <span style={criticalText}>Critical</span>;
+          if (coverage > 100) return <span style={criticalText}>Critical</span>;
           if (coverage == 100) return <span>-</span>;
           if (coverage >= 90) return <span>Low</span>;
           if (coverage > 70) return <span>Medium</span>;
@@ -250,7 +261,11 @@ export const CloudTable = ({
           {({ row }) => {
             if (Array.isArray(row.unmonitoredCloud) && row.unmonitoredCloud.length > 0) {
               return (
-                <HostsTable unmonitoredCloud={row.unmonitoredCloud} setIps={setIps} setOneagentModalOpen={setOneagentModalOpen}/>
+                <HostsTable
+                  unmonitoredCloud={row.unmonitoredCloud}
+                  setIps={setIps}
+                  setOneagentModalOpen={setOneagentModalOpen}
+                />
               );
             } else
               return (
@@ -261,46 +276,53 @@ export const CloudTable = ({
           }}
         </DataTable.ExpandableRow>
       </DataTable>
-      <ConnectCloudModal
-        modalOpen={cloudModalOpen && selectedCloud?.cloudType != "EC2" && selectedCloud?.cloudType != "AZURE"}
-        setModalOpen={setCloudModalOpen}
-        selectedCloud={selectedCloud}
-        apiUrl={apiUrl}
-        gen2Url={gen2Url}
-        demoMode={demoMode}
-        setMockCloudData={setMockCloudData}
-      />
-      <ConnectAWSModal
-        modalOpen={cloudModalOpen && selectedCloud?.cloudType == "EC2"}
-        setModalOpen={setCloudModalOpen}
-        selectedCloud={selectedCloud}
-        apiUrl={apiUrl}
-        gen2Url={gen2Url}
-        demoMode={demoMode}
-        setMockCloudData={setMockCloudData}
-        configToken={configToken}
-        getConfigToken={getConfigToken}
-      />
-      <ConnectAzureModal
-        modalOpen={cloudModalOpen && selectedCloud?.cloudType == "AZURE"}
-        setModalOpen={setCloudModalOpen}
-        selectedCloud={selectedCloud}
-        apiUrl={apiUrl}
-        gen2Url={gen2Url}
-        demoMode={demoMode}
-        setMockCloudData={setMockCloudData}
-        configToken={configToken}
-        getConfigToken={getConfigToken}
-      />
-      <InstallOneagentModal
-        modalOpen={oneagentModalOpen}
-        setModalOpen={setOneagentModalOpen}
-        selectedCloud={selectedCloud}
-        apiUrl={apiUrl}
-        gen2Url={gen2Url}
-        demoMode={demoMode}
-        ips={ips}
-      />
+      {cloudModalOpen && (
+        <div>
+          <ConnectCloudModal
+            modalOpen={cloudModalOpen && selectedCloud?.cloudType != "EC2" && selectedCloud?.cloudType != "AZURE"}
+            setModalOpen={setCloudModalOpen}
+            selectedCloud={selectedCloud}
+            apiUrl={apiUrl}
+            gen2Url={gen2Url}
+            demoMode={demoMode}
+            setMockCloudData={setMockCloudData}
+          />
+          <ConnectAWSModal
+            modalOpen={cloudModalOpen && selectedCloud?.cloudType == "EC2"}
+            setModalOpen={setCloudModalOpen}
+            selectedCloud={selectedCloud}
+            apiUrl={apiUrl}
+            gen2Url={gen2Url}
+            demoMode={demoMode}
+            setMockCloudData={setMockCloudData}
+            configToken={configToken}
+            getConfigToken={getConfigToken}
+          />
+          <ConnectAzureModal
+            modalOpen={cloudModalOpen && selectedCloud?.cloudType == "AZURE"}
+            setModalOpen={setCloudModalOpen}
+            selectedCloud={selectedCloud}
+            apiUrl={apiUrl}
+            gen2Url={gen2Url}
+            demoMode={demoMode}
+            setMockCloudData={setMockCloudData}
+            configToken={configToken}
+            getConfigToken={getConfigToken}
+          />
+        </div>
+      )}
+      {oneagentModalOpen && (
+        <InstallOneagentModal
+          modalOpen={oneagentModalOpen}
+          setModalOpen={setOneagentModalOpen}
+          selectedCloud={selectedCloud}
+          apiUrl={apiUrl}
+          gen2Url={gen2Url}
+          demoMode={demoMode}
+          ips={ips}
+          setMockCloudData={setMockCloudData}
+        />
+      )}
     </div>
   );
 };

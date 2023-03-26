@@ -37,15 +37,15 @@ const DEFAULT_MOCK_CLOUDS = [
   },
 ] as Cloud[];
 
-const generateHostData = (count) => {
+const generateHostData = (count, entprefix = "CLOUDHOST", nameprefix = "cloud_") => {
   const hosts: UnmonitoredCloud[] = [];
   for (let i = 0; i < count; i++) {
     hosts.push({
       values: {
-        entityId: `CLOUDHOST-` + i.toString().padStart(7, "0"),
-        entityName: `cloud_` + i.toString().padStart(3, "0"),
-        detectedName: `cloud_` + i.toString().padStart(3, "0"),
-        ipAddress: `10.0.${(i / 254).toFixed(0)}.${i % 254 + 1}`,
+        entityId: entprefix + `-` + i.toString().padStart(7, "0"),
+        entityName: nameprefix + `_` + i.toString().padStart(3, "0"),
+        detectedName: nameprefix + `_` + i.toString().padStart(3, "0"),
+        ipAddress: `10.0.${(i / 254).toFixed(0)}.${(i % 254) + 1}`,
       },
       fields: [
         { name: "entityId", type: "string" as FieldV2BetaType },
@@ -58,7 +58,7 @@ const generateHostData = (count) => {
   return hosts;
 };
 
-export const useMockCloudData = () => {
+const useMockCloudData = () => {
   const [mockCloudData, setMockCloudData] = useState(DEFAULT_MOCK_CLOUDS);
 
   useEffect(() => {
@@ -71,3 +71,5 @@ export const useMockCloudData = () => {
 
   return { mockCloudData, setMockCloudData };
 };
+
+export { useMockCloudData, generateHostData };

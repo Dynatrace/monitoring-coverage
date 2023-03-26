@@ -1,7 +1,16 @@
-import React, { Dispatch, SetStateAction, useState, } from "react";
-import { Modal, Flex, FormField, TextInput, Button, PasswordInput, useToastNotification, } from '@dynatrace/strato-components-preview';
-import { Cloud } from "../types/CloudTypes";
+import React, { Dispatch, SetStateAction, useState } from "react";
+import {
+  Modal,
+  Flex,
+  FormField,
+  TextInput,
+  Button,
+  PasswordInput,
+  useToastNotification,
+} from "@dynatrace/strato-components-preview";
+import { Cloud, UnmonitoredCloud } from "../types/CloudTypes";
 import { functions } from "@dynatrace/util-app";
+import { generateHostData } from "../hooks/useMockCloudData";
 
 export const ConnectAzureModal = ({
   modalOpen,
@@ -59,19 +68,19 @@ export const ConnectAzureModal = ({
         console.log("gen-2-proxy success:", result);
         if (result.data) {
           showToast({
-            title: 'Cloud connection created',
-            type: 'info',
+            title: "Cloud connection created",
+            type: "info",
             message: `Successfully created connection to ${selectedCloud?.cloud}. ${JSON.stringify(result.data)}`,
             lifespan: 4000,
-          })
+          });
           setModalOpen(false);
         } else if (result.error) {
           console.warn("gen-2-proxy failure:", result.error);
           showToast({
-            title: 'Cloud connection could not be created',
-            type: 'critical',
+            title: "Cloud connection could not be created",
+            type: "critical",
             message: `Failed to create connection to ${selectedCloud?.cloud}. ${result.data}`,
-          })
+          });
         }
       });
   };
@@ -80,17 +89,24 @@ export const ConnectAzureModal = ({
     console.log("CloudConnectModal (mock):", { name, clientId, tenantId, secretKey });
     //Update mock data
     setMockCloudData((oldData) => {
-      if (selectedCloud) selectedCloud.cloudStatus = true;
-      if (selectedCloud) selectedCloud.cloudHosts = Math.round((1 + Math.random()) * selectedCloud.oneagentHosts);
+      if (selectedCloud) {
+        selectedCloud.cloudStatus = true;
+        selectedCloud.cloudHosts = Math.round((1 + Math.random()) * selectedCloud.oneagentHosts);
+        selectedCloud.unmonitoredCloud = generateHostData(
+          selectedCloud.cloudHosts - selectedCloud.oneagentHosts,
+          "NEWCLOUDHOST",
+          "newcloud"
+        );
+      }
       return [...oldData];
     });
 
     showToast({
-      title: '(mock) Cloud connection created',
-      type: 'info',
+      title: "(mock) Cloud connection created",
+      type: "info",
       message: `Successfully created connection to ${selectedCloud?.cloud}`,
       lifespan: 4000,
-    })
+    });
     setModalOpen(false);
   };
 
