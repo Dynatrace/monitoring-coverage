@@ -139,7 +139,7 @@ export const ConnectAzureModal = ({
         </FormField>
 
         <Flex flexItem flexGrow={0}>
-          <Button variant="primary" onClick={demoMode ? mockConnect : realConnect}>
+          <Button variant="accent" onClick={demoMode ? mockConnect : realConnect}>
             Connect
           </Button>
         </Flex>

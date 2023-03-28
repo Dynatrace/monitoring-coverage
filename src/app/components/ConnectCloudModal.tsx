@@ -96,7 +96,7 @@ export const ConnectCloudModal = ({
         <Flex flexItem flexGrow={0}>
           {demoMode && (
             <Button
-              variant="primary"
+              variant="accent"
               onClick={() => {
                 console.log("CloudConnectModal (demo):", { cloudUrl, cloudKey });
 
@@ -117,7 +117,7 @@ export const ConnectCloudModal = ({
           {!demoMode && (
             <Link target="_blank" href={url}>
               <Button
-                variant="primary"
+                variant="accent"
                 onClick={() => {
                   console.log("opening settings:", url);
                 }}
@@ -127,7 +127,7 @@ export const ConnectCloudModal = ({
             </Link>
           )}
           <Button
-            variant="secondary"
+            variant="emphasized"
             onClick={() => {
               setModalOpen(false);
             }}

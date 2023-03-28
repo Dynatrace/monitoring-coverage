@@ -1,11 +1,12 @@
-import type { CliOptions } from "@dynatrace/dtp-cli";
+import type { CliOptions } from "@dynatrace/dt-app";
 
 const config: CliOptions = {
+  //CHANGE THIS TO POINT TO YOUR ENVIRONMENT:
   environmentUrl: "https://umsaywsjuo.dev.apps.dynatracelabs.com/",
   icon: "./src/assets/logo.png",
   app: {
     name: "Monitoring Coverage",
-    version: "0.0.4",
+    version: "0.0.5",
     description: "A sample app helping you get to 100% cloud coverage",
     id: "my.monitoring.coverage",
     scopes: [

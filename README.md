@@ -2,6 +2,7 @@
 
 This is a project to demonstrate how to use DQL to query the entity model, visualize the data, and take action.
 The app helps users understand which hosts are _not_ monitored by Dynatrace today.
+![Screenshots](./src/assets/monitoring-coverage.png)
 
 ## Support
 Please note that the app is intended mostly for educational purposes and should not be used as-is for production scenarios. It is covered under the “light support” provisions of the Dynatrace terms and conditions.
@@ -9,8 +10,9 @@ Please note that the app is intended mostly for educational purposes and should 
 ## TL;DR
 You can start using this Sample App now:
 1. Clone this repo to your localhost
-2. Edit `dtp.config.ts` to point to your environment
-3. Deploy using `npx dtp-cli deploy`
+2. Edit `app.config.ts` to point to your environment
+3. Test locally: `npm run start`
+4. Deploy using `npm run deploy`
 
 Or, keep reading to understand how to modify this app for your own purposes or build your own.
 

@@ -42,7 +42,7 @@ export const UnmonitoredHostTable = () => {
           <span>Get info from user here:</span>
           <Flex flexItem flexGrow={0}>
             <Button
-              variant="primary"
+              variant="accent"
               onClick={() => {
                 setModalOpen(false);
               }}

@@ -75,6 +75,7 @@ export const CloudTable = ({
       {
         accessor: "cloud",
         header: "Cloud provider",
+        width: 170,
         cell: ({ row }) => {
           return (
             <span>
@@ -161,15 +162,15 @@ export const CloudTable = ({
       },
       {
         header: "Actions",
-        width: 190,
+        width: 170,
         cell: ({ row }) => {
           if (!row.original.cloudStatus || coverageRatio(row) > 100)
             return (
               <Flex minWidth={190}>
                 <Button
                   className="connectCloud"
-                  fullWidth
-                  variant="primary"
+                  width="full"
+                  variant="accent"
                   onClick={() => {
                     setSelectedCloud(row.original);
                     setCloudModalOpen(true);
@@ -187,7 +188,8 @@ export const CloudTable = ({
               <Flex minWidth={200}>
                 <Button
                   className="installOneagent"
-                  fullWidth
+                  width="full"
+                  variant="emphasized"
                   onClick={() => {
                     setSelectedCloud(row.original);
                     setOneagentModalOpen(true);
@@ -205,12 +207,14 @@ export const CloudTable = ({
       },
       {
         header: " ",
-        width: 50,
+        width: 40,
         cell: ({ row }) => {
           return (
             <Menu>
               <Menu.Trigger>
-                <Button style={{ padding: 0, margin: 0 }} prefixIcon={<DotMenuIcon />} variant="minimal" />
+                <Button style={{ padding: 0, margin: 0 }} variant="default">
+                  <Button.Prefix><DotMenuIcon /></Button.Prefix>
+                  </Button>
               </Menu.Trigger>
               <Menu.Content>
                 <Menu.Item

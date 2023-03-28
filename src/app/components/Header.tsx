@@ -14,10 +14,10 @@ export const Header = () => {
       <Flex alignItems="center">
         <AppName />
         <Divider orientation="vertical" />
-        <Button as={RouterLink} to="/" variant="minimal">
+        <Button as={RouterLink} to="/" variant="default">
           Home
         </Button>
-        <Button as={RouterLink} to="/data" variant="minimal">
+        <Button as={RouterLink} to="/data" variant="default">
           Explore data
         </Button>
       </Flex>

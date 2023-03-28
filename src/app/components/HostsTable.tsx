@@ -34,7 +34,11 @@ export const HostsTable = ({ unmonitoredCloud, setOneagentModalOpen, setIps }) =
         return (
           <Menu>
             <Menu.Trigger>
-              <Button style={{ padding: 0, margin: 0 }} prefixIcon={<DotMenuIcon />} variant="minimal" />
+              <Button style={{ padding: 0, margin: 0 }} variant="default">
+                <Button.Prefix>
+                  <DotMenuIcon />
+                </Button.Prefix>
+              </Button>
             </Menu.Trigger>
             <Menu.Content>
               <Menu.Item

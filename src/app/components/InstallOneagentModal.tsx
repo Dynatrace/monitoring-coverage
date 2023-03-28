@@ -272,7 +272,7 @@ export const InstallOneagentModal = ({
                 return;
               }}
             />
-            <Button variant="primary" onClick={copyToClipboard} className="copyButton">
+            <Button variant="accent" onClick={copyToClipboard} className="copyButton" color={ipsCopied?"success":"neutral"}>
               {/* // Visually show the copy is complete here */}
               {!ipsCopied ? <CopyIcon /> : <CheckmarkIcon />}
               <span>Copy</span>
@@ -305,7 +305,7 @@ export const InstallOneagentModal = ({
         <Flex flexItem flexGrow={0} flexDirection="row">
           <Flex flexDirection="row" alignItems={"baseline"}>
             <Button
-              variant="minimal"
+              variant="default"
               className={optionsOpen ? "caret-button open" : "caret-button"}
               onClick={() => {
                 setOptionsOpen((old) => !old);
@@ -362,7 +362,7 @@ export const InstallOneagentModal = ({
             />
             <Flex flexDirection="row">
               <FormField label="Download 1-liner">
-                <Button variant="primary" onClick={copyDownload1Liner} className="dlButton">
+                <Button variant="accent" onClick={copyDownload1Liner} className="dlButton" color={dl1linerCopied?"success":"neutral"}>
                   {!dl1linerCopied ? <CopyIcon /> : <CheckmarkIcon />}
                   <span>Copy</span>
                 </Button>
@@ -392,7 +392,7 @@ export const InstallOneagentModal = ({
                 return;
               }}
             />
-            <Button variant="primary" onClick={copyInstall1Liner} className="copyButton">
+            <Button variant="accent" onClick={copyInstall1Liner} className="copyButton" color={install1linerCopied?"success":"neutral"}>
               {!install1linerCopied ? <CopyIcon /> : <CheckmarkIcon />}
               Copy
             </Button>
