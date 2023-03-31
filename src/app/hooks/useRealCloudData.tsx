@@ -59,27 +59,18 @@ export const useRealCloudData = () => {
               | fieldsAdd cloud = if(cloudType <> "", cloudType, else:"VMWare")
               | summarize by:{cloud}, count()`,
       });
-      // const cloudHostsQuery = queryClient.query({
-      //   query: `fetch metrics
-      //         | filter in(metric.key,"dt.cloud.aws.ec2.cpu.usage","dt.cloud.azure.vm.cpu_usage","cloud.gcp.compute_googleapis_com.guest.cpu.usage_time","dt.cloud.vmware.vm.cpu.usage")
-      //         | fieldsAdd entityId = if(dt.source_entity<>"",
-      //         dt.source_entity,
-      //         else: if(dt.entity.azure_vm<>"",dt.entity.azure_vm,else:\`dt.entity.cloud:gcp:gce_instance\`))
-      //         | summarize by:{metric.key,entityId}, count()
-      //         | summarize by:metric.key, count()`,
-      // });
       const awsAllHostsQuery = queryClient.query({
         //get all AWS hosts
         query: `fetch dt.entity.EC2_INSTANCE
               | filter arn != ""
-              //| fieldsAdd detectedName, ipAddress = localIp
+              //| fieldsAdd entity.detected_name, ipAddress = localIp
               | summarize count(), alias:num`,
       });
       const awsUnmonitoredHostsQuery = queryClient.query({
         //get all AWS hosts w/o OneAgent
         query: `fetch dt.entity.EC2_INSTANCE
-              | filterOut in(entityId,entitySelector("type(EC2_INSTANCE),toRelationships.runsOn(type(host),isMonitoringCandidate(false))"))
-              | fieldsAdd detectedName, ipAddress = localIp`,
+              | filterOut in(id,entitySelector("type(EC2_INSTANCE),toRelationships.runsOn(type(host),isMonitoringCandidate(false))"))
+              | fieldsAdd entity.detected_name, ipAddress = localIp`,
       });
       const azureAllHostsQuery = queryClient.query({
         //get all Azure hosts
@@ -90,8 +81,8 @@ export const useRealCloudData = () => {
       const azureUnmonitoredHostsQuery = queryClient.query({
         //get all Azure hosts w/o OneAgent
         query: `fetch dt.entity.azure_vm
-              | filterOut in(entityId,entitySelector("type(azure_vm),toRelationships.runsOn(type(host),isMonitoringCandidate(false))"))
-              | fieldsAdd detectedName, ipAddress = ipAddress[0]`,
+              | filterOut in(id,entitySelector("type(azure_vm),toRelationships.runsOn(type(host),isMonitoringCandidate(false))"))
+              | fieldsAdd entity.detected_name, ipAddress = ipAddress[0]`,
       });
       const gcpAllHostsQuery = queryClient.query({
         //get all gcp hosts
@@ -104,15 +95,15 @@ export const useRealCloudData = () => {
         query: `fetch \`dt.entity.cloud:gcp:gce_instance\`
               | lookup [fetch \`dt.entity.host\` 
               | filter gceInstanceId <> "" 
-              | fieldsAdd instance_id=gceInstanceId], lookupField: gceInstanceId, sourceField:entityName
-              | filter isNull(lookup.entityId)
+              | fieldsAdd instance_id=gceInstanceId], lookupField: gceInstanceId, sourceField:entity.name
+              | filter isNull(lookup.id)
               //| fieldsAdd ipAddress`,
       });
       const vmwareAllHostsQuery = queryClient.query({
         //get all vmware hosts
         query: `fetch dt.entity.virtualmachine
               //| fieldsAdd ip = ipAddress[0]
-              //| fields entityId, entityName, ipAddress=ip
+              //| fields id, entityName, ipAddress=ip
               //| limit 100000
               | summarize count(), alias:num`,
       });
@@ -120,9 +111,9 @@ export const useRealCloudData = () => {
         //get all vmware hosts w/o OneAgent
         query: `fetch dt.entity.virtualmachine
               | fieldsAdd ip = ipAddress[0]
-              | lookup [fetch dt.entity.host | filter in(entityId,entitySelector("type(host),fromRelationships.runsOn(type(virtualmachine))")) | fieldsAdd ip = ipAddress[0]], lookupField: ip, sourceField:ip
+              | lookup [fetch dt.entity.host | filter in(id,entitySelector("type(host),fromRelationships.runsOn(type(virtualmachine))")) | fieldsAdd ip = ipAddress[0]], lookupField: ip, sourceField:ip
               | filter isNull(lookup.ip)
-              | fields entityId, entityName, ipAddress=ip
+              | fields id, entity.name, ipAddress=ip
               | limit 100000`,
       });
 

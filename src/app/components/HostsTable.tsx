@@ -1,12 +1,23 @@
-import React, { useMemo } from "react";
+import React, { useMemo, Dispatch } from "react";
 import { getIntentLink } from "@dynatrace-sdk/navigation";
-import { DataTable, convertToColumns, Link, QueryColumn, Menu, Button } from "@dynatrace/strato-components-preview";
+import { DataTable, convertToColumns, Link, QueryColumn, Menu, Button, convertToColumnsFromWellFormedArray } from "@dynatrace/strato-components-preview";
 import { OpenWithIcon, DotMenuIcon } from "@dynatrace/strato-icons";
+import { UnmonitoredCloud, UnmonitoredCloudCols } from "../types/CloudTypes";
 
-export const HostsTable = ({ unmonitoredCloud, setOneagentModalOpen, setIps }) => {
+export const HostsTable = ({
+  unmonitoredCloud,
+  setOneagentModalOpen,
+  setIps,
+}: {
+  unmonitoredCloud: UnmonitoredCloud[];
+  setOneagentModalOpen: Dispatch<React.SetStateAction<boolean>>;
+  setIps: Dispatch<React.SetStateAction<string>>;
+}) => {
   const columns = useMemo(() => {
-    const cols = convertToColumns(unmonitoredCloud);
+    // const cols = convertToColumns(unmonitoredCloud);
+    const cols = [...UnmonitoredCloudCols];
     const entCol = cols.find((c) => (c.id = "entityId"));
+    debugger;
     if (entCol) {
       entCol.cell = ({ row }) => {
         const intentLink = getIntentLink({ "dt.entity.host": row.original.values.entityId });
