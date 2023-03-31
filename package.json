@@ -26,7 +26,7 @@
     "@dynatrace/dt-app": "0.94.2"
   },
   "name": "monitoring-coverage",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A sample app helping you get to 100% cloud coverage",
   "engines": {
     "node": ">=16.13.0"
