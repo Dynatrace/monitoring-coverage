@@ -54,8 +54,8 @@ fetch dt.entity.EC2_INSTANCE
 
 ```
 fetch dt.entity.EC2_INSTANCE
-| filterOut in(entityId,entitySelector("type(EC2_INSTANCE),toRelationships.runsOn(type(host),isMonitoringCandidate(false))"))
-| fieldsAdd detectedName, ipAddress = localIp
+| filterOut in(id,entitySelector("type(EC2_INSTANCE),toRelationships.runsOn(type(host),isMonitoringCandidate(false))"))
+| fieldsAdd entity.detected_name, ipAddress = localIp
 ```
 
 ### Azure VMs
@@ -66,8 +66,8 @@ fetch dt.entity.azure_vm
 
 ```
 fetch dt.entity.azure_vm
-| filterOut in(entityId,entitySelector("type(azure_vm),toRelationships.runsOn(type(host),isMonitoringCandidate(false))"))
-| fieldsAdd detectedName, ipAddress = ipAddress[0]
+| filterOut in(id,entitySelector("type(azure_vm),toRelationships.runsOn(type(host),isMonitoringCandidate(false))"))
+| fieldsAdd entity.detected_name, ipAddress = ipAddress[0]
 ```
 
 ### GCP CE VMs
@@ -80,8 +80,8 @@ fetch \`dt.entity.cloud:gcp:gce_instance\`
 fetch `fetch \`dt.entity.cloud:gcp:gce_instance\`
 | lookup [fetch \`dt.entity.host\` 
   | filter gceInstanceId <> "" 
-  | fieldsAdd instance_id=gceInstanceId], lookupField: gceInstanceId, sourceField:entityName
-| filter isNull(lookup.entityId)
+  | fieldsAdd instance_id=gceInstanceId], lookupField: gceInstanceId, sourceField:entity.name
+| filter isNull(lookup.id)
 //| fieldsAdd ipAddress
 ```
 
@@ -95,10 +95,10 @@ fetch dt.entity.virtualmachine
 fetch dt.entity.virtualmachine
 | fieldsAdd ip = ipAddress[0]
 | lookup [fetch dt.entity.host 
-  | filter in(entityId,entitySelector("type(host),fromRelationships.runsOn(type(virtualmachine))")) 
+  | filter in(id,entitySelector("type(host),fromRelationships.runsOn(type(virtualmachine))")) 
   | fieldsAdd ip = ipAddress[0]], lookupField: ip, sourceField:ip
 | filter isNull(lookup.ip)
-| fields entityId, entityName, ipAddress=ip
+| fields id, entity.name, ipAddress=ip
 | limit 100000
 ```
 
