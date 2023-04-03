@@ -2,9 +2,9 @@ import { RecordV2Beta, RecordV2BetaValues } from "@dynatrace-sdk/client-query-v0
 import { convertToColumnsFromWellFormedArray, TableColumn } from "@dynatrace/strato-components-preview";
 
 interface UnmonitoredCloudValues extends RecordV2BetaValues {
-  entityId: string;
-  entityName: string;
-  detectedName: string;
+  id: string;
+  'entity.name': string;
+  'entity.detected_name': string;
   ipAddress: string;
 }
 
@@ -14,11 +14,11 @@ interface UnmonitoredCloud extends RecordV2Beta {
 
 const UnmonitoredCloudCols = [
   {
-    accessor: "values.entityId",
+    accessor: "values.id",
     header: "Entity ID",
   },
-  { accessor: "values.entityName", header: "Entity Name" },
-  { accessor: "values.detectedName", header: "Detected Name" },
+  { accessor: "values.'entity.name'", header: "Entity Name" },
+  { accessor: "values.'entity.detected_name'", header: "Detected Name" },
   { accessor: "values.ipAddress", header: "IP Address" },
 ] as TableColumn[];
 

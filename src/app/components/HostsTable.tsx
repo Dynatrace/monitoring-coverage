@@ -16,14 +16,14 @@ export const HostsTable = ({
   const columns = useMemo(() => {
     // const cols = convertToColumns(unmonitoredCloud);
     const cols = [...UnmonitoredCloudCols];
-    const entCol = cols.find((c) => (c.id = "entityId"));
+    const entCol = cols.find((c) => (c.id = "values.id"));
     debugger;
     if (entCol) {
       entCol.cell = ({ row }) => {
-        const intentLink = getIntentLink({ "dt.entity.host": row.original.values.entityId });
+        const intentLink = getIntentLink({ "dt.entity.host": row.original.values.id });
         return (
           <Link href={intentLink} target="_blank">
-            {row.original.values.entityId} <OpenWithIcon />
+            {row.original.values.id} <OpenWithIcon />
           </Link>
         );
       };

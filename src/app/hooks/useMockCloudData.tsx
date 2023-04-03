@@ -42,15 +42,15 @@ const generateHostData = (count, entprefix = "CLOUDHOST", nameprefix = "cloud_")
   for (let i = 0; i < count; i++) {
     hosts.push({
       values: {
-        entityId: entprefix + `-` + i.toString().padStart(7, "0"),
-        entityName: nameprefix + `_` + i.toString().padStart(3, "0"),
-        detectedName: nameprefix + `_` + i.toString().padStart(3, "0"),
+        id: entprefix + `-` + i.toString().padStart(7, "0"),
+        'entity.name': nameprefix + `_` + i.toString().padStart(3, "0"),
+        'entity.detected_name': nameprefix + `_` + i.toString().padStart(3, "0"),
         ipAddress: `10.0.${(i / 254).toFixed(0)}.${(i % 254) + 1}`,
       },
       fields: [
-        { name: "entityId", type: "string" as FieldV2BetaType },
-        { name: "entityName", type: "string" as FieldV2BetaType },
-        { name: "detectedName", type: "string" as FieldV2BetaType },
+        { name: "id", type: "string" as FieldV2BetaType },
+        { name: "entity.name", type: "string" as FieldV2BetaType },
+        { name: "entity.detected_name", type: "string" as FieldV2BetaType },
         { name: "ipAddress", type: "string" as FieldV2BetaType },
       ],
     } as UnmonitoredCloud);
