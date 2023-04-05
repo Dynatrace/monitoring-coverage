@@ -9,13 +9,13 @@ img.iconStyle {
   vertical-align: middle;
 }
 
-button {
+/* button {
   margin-right: 10px;
-}
-td button {
+}*/
+button.actionButton {
   min-width: 150px;
   text-align: center;
-}
+} 
 
 .copyButton, .dlButton {
   width: 150px;
@@ -45,3 +45,25 @@ select, button.select-button {
 textarea[readonly]:hover {
   cursor: text;
 }
+
+svg.iconStyle, p.iconStyle > svg {
+  height: 20px;
+  width: 20px;
+  padding-right: 5px;
+  vertical-align: middle;
+}
+
+button.connectCloud {
+  text-align: left;
+  padding-left: 20px;
+  margin-right: 0px;
+}
+
+button.installOneagent {
+  text-align: left;
+  padding-left: 20px;
+}
+
+/* .cloudTable > div > div > div > div > .strato-table-header-cell:nth-child(1){
+  width: 50px !important;
+} */

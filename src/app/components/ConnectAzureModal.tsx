@@ -6,7 +6,8 @@ import {
   TextInput,
   Button,
   PasswordInput,
-  useToastNotification,
+  Text,
+  showToast,
 } from "@dynatrace/strato-components-preview";
 import { Cloud, UnmonitoredCloud } from "../types/CloudTypes";
 import { functions } from "@dynatrace/util-app";
@@ -37,7 +38,6 @@ export const ConnectAzureModal = ({
   const [clientId, setClientId] = useState("");
   const [tenantId, setTenantId] = useState("");
   const [secretKey, setSecretKey] = useState("");
-  const { showToast } = useToastNotification();
 
   const realConnect = async () => {
     console.log("CloudConnectModal (real):", { name, clientId, tenantId, secretKey });
@@ -112,10 +112,10 @@ export const ConnectAzureModal = ({
 
   return (
     <Modal title={`Add ${selectedCloud?.cloud} integration`} show={modalOpen} onDismiss={() => setModalOpen(false)}>
-      <Flex flexDirection="column">
+      <Flex flexDirection="column" gap={16}>
         <Flex flexDirection="row">
-          {selectedCloud?.icon && <img src={`./assets/` + selectedCloud.icon} className="iconStyle" />}
-          <span>&nbsp; Add {selectedCloud?.cloud} integration:</span>
+          <Text>{selectedCloud?.icon && <img src={`./assets/` + selectedCloud.icon} className="iconStyle" />}
+          &nbsp; Add {selectedCloud?.cloud} integration:</Text>
         </Flex>
         <FormField label="Connection name">
           <TextInput placeholder="For example, Dynatrace integration" value={name} onChange={setName} />
@@ -138,8 +138,8 @@ export const ConnectAzureModal = ({
           <PasswordInput placeholder="**********************" value={secretKey} onChange={setSecretKey} />
         </FormField>
 
-        <Flex flexItem flexGrow={0}>
-          <Button variant="accent" onClick={demoMode ? mockConnect : realConnect}>
+        <Flex flexGrow={0} justifyContent="flex-end">
+          <Button variant="emphasized" onClick={demoMode ? mockConnect : realConnect}>
             Connect
           </Button>
         </Flex>

@@ -1,13 +1,7 @@
 import React, { Dispatch, SetStateAction, useState, useEffect, useMemo } from "react";
-import { Modal, Flex, FormField, TextInput, Button, Link } from "@dynatrace/strato-components-preview";
-// import {
-//   accessTokensApiTokensClient,
-//   ApiTokenCreate,
-//   ApiTokenCreateScopesItem,
-// } from "@dynatrace-sdk/client-classic-environment-v2";
+import { Modal, Flex, FormField, TextInput, Button, Link, Text } from "@dynatrace/strato-components-preview";
 import { ExternalLinkIcon } from "@dynatrace/strato-icons";
 import { Cloud } from "../types/CloudTypes";
-// import { functions } from "@dynatrace/util-app";
 
 const SAMPLE_AWS = {
   label: "string",
@@ -18,32 +12,7 @@ const SAMPLE_AWS = {
       accessKey: "string",
       secretKey: "string",
     },
-    // "roleBasedAuthentication": {
-    //   "iamRole": "string",
-    //   "accountId": "string"
-    // }
   },
-  // "taggedOnly": true,
-  // "tagsToMonitor": [
-  //   {
-  //     "name": "string",
-  //     "value": "string"
-  //   }
-  // ],
-  // "supportingServicesToMonitor": [
-  //   {
-  //     "name": "string",
-  //     "monitoredMetrics": [
-  //       {
-  //         "name": "string",
-  //         "statistic": "AVERAGE",
-  //         "dimensions": [
-  //           "string"
-  //         ]
-  //       }
-  //     ]
-  //   }
-  // ]
 };
 
 export const ConnectCloudModal = ({
@@ -76,13 +45,15 @@ export const ConnectCloudModal = ({
 
   return (
     <Modal title={`Add ${selectedCloud?.cloud} integration`} show={modalOpen} onDismiss={() => setModalOpen(false)}>
-      <Flex flexDirection="column">
+      <Flex flexDirection="column" gap={16}>
         <Flex flexDirection="row">
-          {selectedCloud?.icon && <img src={`./assets/` + selectedCloud.icon} className="iconStyle" />}
-          <span>&nbsp; Add {selectedCloud?.cloud} integration:</span>
+          <Text>
+            {selectedCloud?.icon && <img src={`./assets/` + selectedCloud.icon} className="iconStyle" />}
+            &nbsp; Add {selectedCloud?.cloud} integration:
+          </Text>
         </Flex>
         {demoMode && (
-          <div>
+          <Flex flexDirection="column" gap={16}>
             <FormField label="(Mock)">
               <FormField label="API URL">
                 <TextInput placeholder="https://xxx.xxxxxxxx.xxx/xxx" value={cloudUrl} onChange={setCloudUrl} />
@@ -91,12 +62,12 @@ export const ConnectCloudModal = ({
                 <TextInput placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxx" value={cloudKey} onChange={setCloudKey} />
               </FormField>
             </FormField>
-          </div>
+          </Flex>
         )}
-        <Flex flexItem flexGrow={0}>
+        <Flex flexGrow={0} justifyContent="flex-end">
           {demoMode && (
             <Button
-              variant="accent"
+              variant="emphasized"
               onClick={() => {
                 console.log("CloudConnectModal (demo):", { cloudUrl, cloudKey });
 
@@ -117,17 +88,20 @@ export const ConnectCloudModal = ({
           {!demoMode && (
             <Link target="_blank" href={url}>
               <Button
-                variant="accent"
+                variant="emphasized"
                 onClick={() => {
                   console.log("opening settings:", url);
                 }}
               >
-                {selectedCloud?.cloudType == "VMWare" ? "Settings" : "Hub"} <ExternalLinkIcon />
+                {selectedCloud?.cloudType == "VMWare" ? "Settings" : "Hub"}
+                <Button.Suffix>
+                  <ExternalLinkIcon />
+                </Button.Suffix>
               </Button>
             </Link>
           )}
           <Button
-            variant="emphasized"
+            variant="default"
             onClick={() => {
               setModalOpen(false);
             }}

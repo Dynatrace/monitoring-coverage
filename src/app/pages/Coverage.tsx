@@ -13,14 +13,13 @@ export const Coverage = ({ apiUrl, gen2Url }) => {
   const {configToken, getConfigToken} = useTokens();
 
   useEffect(() => {
-    // console.log("demoMode:",demoMode);
     if (!demoMode) fetchQueries();
   }, [demoMode]);
 
   return (
     <Flex flexDirection="column">
-      <Flex flexDirection="row" justifyContent="space-between">
-        <Heading level={5}>Monitoring Coverage</Heading>
+      <Flex flexDirection="row" justifyContent="space-between" alignItems="flex-end">
+        <Heading level={1}>Monitoring Coverage</Heading>
         <span className="tinyText">{demoMode ? "(showing mock data)" : ""}</span>
         <Flex flexDirection="row">
           <LoadingIndicator loading={runningDQL}/>

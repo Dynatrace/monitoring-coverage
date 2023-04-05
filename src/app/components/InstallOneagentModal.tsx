@@ -10,8 +10,10 @@ import {
   LoadingIndicator,
   TextInput,
   TextArea,
-  useToastNotification,
-} from '@dynatrace/strato-components-preview';
+  Text,
+  showToast,
+  CodeSnippet,
+} from "@dynatrace/strato-components-preview";
 import {
   deploymentClient,
   DownloadLatestAgentInstallerPathOsType,
@@ -28,12 +30,19 @@ import {
   ApiTokenCreateScopesItem,
 } from "@dynatrace-sdk/client-classic-environment-v2";
 // import { HttpClientResponse } from "@dynatrace-sdk/client-classic-environment-v1/types/packages/http-client/src/";
-import { CopyIcon, DownloadIcon, PlayIcon, CheckmarkIcon } from '@dynatrace/strato-icons';
+import {
+  CopyIcon,
+  DownloadIcon,
+  PlayIcon,
+  CheckmarkIcon,
+  UnfoldMoreIcon,
+  UnfoldLessIcon,
+} from "@dynatrace/strato-icons";
 import { Cloud, UnmonitoredCloud } from "../types/CloudTypes";
 import { downloadLatestAgentInstaller } from "../Workarounds.js";
 import "./InstallOneagentModal.css";
 
-const TEXTCOLS = 80;
+const TEXTCOLS = 120;
 
 export const InstallOneagentModal = ({
   modalOpen,
@@ -73,7 +82,6 @@ export const InstallOneagentModal = ({
   const [networkZone, setNetworkZone] = useState<string | undefined>("");
   const [version, setVersion] = useState<string>("");
   const [token, setToken] = useState<string>("<TOKEN_HERE>");
-  const { showToast } = useToastNotification();
 
   useEffect(() => {
     const config: {
@@ -144,7 +152,9 @@ export const InstallOneagentModal = ({
   }, []);
   const dl1Liner = useMemo(
     () =>
-      `wget -O Dynatrace-OneAgent-${osTypeTxt}-${version}.sh "${gen2Url}/api/v1/deployment/installer/agent/${osType}/${installerType}/latest?arch=${arch}&flavor=default" --header="Authorization: Api-Token ${demoMode ? "<TOKEN_HERE>" : token}"`,
+      `wget -O Dynatrace-OneAgent-${osTypeTxt}-${version}.sh "${gen2Url}/api/v1/deployment/installer/agent/${osType}/${installerType}/latest?arch=${arch}&flavor=default" --header="Authorization: Api-Token ${
+        demoMode ? "<TOKEN_HERE>" : token
+      }"`,
     [version, gen2Url, osType, installerType, arch, token, osTypeTxt, demoMode]
   );
   const install1Liner = useMemo(
@@ -201,7 +211,7 @@ export const InstallOneagentModal = ({
   const copyInstall1Liner = () => {
     navigator.clipboard.writeText(install1Liner);
     setInstall1LinerCopied(true);
-    if(demoMode){
+    if (demoMode) {
       setMockCloudData((oldData) => {
         if (selectedCloud) {
           selectedCloud.oneagentHosts = selectedCloud.cloudHosts;
@@ -252,17 +262,19 @@ export const InstallOneagentModal = ({
 
   return (
     <Modal title={`Install OneAgents`} show={modalOpen} onDismiss={() => setModalOpen(false)} dismissible={true}>
-      <Flex flexDirection="column" flex={0}>
+      <Flex flexDirection="column" flex={0} gap={16}>
         {/* Heading */}
-        <span>
+        <Text>
           <img src="./assets/oneagent.svg" className="iconStyle" />
           &nbsp; Install OneAgents:
-        </span>
+        </Text>
 
         {/* Step 1 - Copy IP list */}
         <Flex flexItem flexGrow={0} flexDirection="row">
-          <FormField label="Copy IP list">
-            {/* <Flex flexDirection="row"> */}
+          <FormField label="IP list">
+            {/* <CodeSnippet showLineNumbers={false} lineBreaks={true} maxHeight={150}>
+              {ips}
+            </CodeSnippet> */}
             <TextArea
               readOnly
               rows={3}
@@ -272,12 +284,16 @@ export const InstallOneagentModal = ({
                 return;
               }}
             />
-            <Button variant="accent" onClick={copyToClipboard} className="copyButton" color={ipsCopied?"success":"neutral"}>
+            <Button
+              variant="accent"
+              onClick={copyToClipboard}
+              className="copyButton"
+              color={ipsCopied ? "success" : "neutral"}
+            >
               {/* // Visually show the copy is complete here */}
-              {!ipsCopied ? <CopyIcon /> : <CheckmarkIcon />}
-              <span>Copy</span>
+              <Button.Prefix>{!ipsCopied ? <CopyIcon /> : <CheckmarkIcon />}</Button.Prefix>
+              Copy
             </Button>
-            {/* </Flex> */}
           </FormField>
         </Flex>
 
@@ -306,14 +322,14 @@ export const InstallOneagentModal = ({
           <Flex flexDirection="row" alignItems={"baseline"}>
             <Button
               variant="default"
-              className={optionsOpen ? "caret-button open" : "caret-button"}
+              // className={optionsOpen ? "caret-button open" : "caret-button"}
               onClick={() => {
                 setOptionsOpen((old) => !old);
               }}
             >
-              &gt;
+              <Button.Prefix>{optionsOpen ? <UnfoldLessIcon /> : <UnfoldMoreIcon />}</Button.Prefix>
+              Optional Parameters
             </Button>
-            <span>Set customized options (optional)</span>
           </Flex>
           {optionsOpen && (
             <Flex flexDirection="row">
@@ -360,22 +376,29 @@ export const InstallOneagentModal = ({
                 return;
               }}
             />
-            <Flex flexDirection="row">
-              <FormField label="Download 1-liner">
-                <Button variant="accent" onClick={copyDownload1Liner} className="dlButton" color={dl1linerCopied?"success":"neutral"}>
-                  {!dl1linerCopied ? <CopyIcon /> : <CheckmarkIcon />}
-                  <span>Copy</span>
-                </Button>
-              </FormField>
-              <FormField label="Installer">
-                <Button disabled={downloading} onClick={downloadOneagent} className="copyButton">
-                  <Flex flexDirection="row" alignContent="space-between">
+            {/* <CodeSnippet showLineNumbers={false} lineBreaks={true} maxHeight={150}>
+              {dl1Liner}
+            </CodeSnippet> */}
+            <Flex flexDirection="row" gap={12} alignItems="baseline">
+              <Button
+                variant="accent"
+                onClick={copyDownload1Liner}
+                className="dlButton"
+                color={dl1linerCopied ? "success" : "neutral"}
+              >
+                <Button.Prefix>{!dl1linerCopied ? <CopyIcon /> : <CheckmarkIcon />}</Button.Prefix>
+                Copy
+              </Button>
+              <Text>or</Text>
+              <Button disabled={downloading} onClick={downloadOneagent} className="copyButton">
+                <Flex flexDirection="row" alignContent="space-between">
+                  <Button.Prefix>
                     <DownloadIcon />
-                    <span>Download</span>
-                  </Flex>
-                </Button>
-                <LoadingIndicator loading={downloading} />
-              </FormField>
+                  </Button.Prefix>
+                  Download
+                </Flex>
+              </Button>
+              <LoadingIndicator loading={downloading} />
             </Flex>
           </FormField>
         </Flex>
@@ -392,8 +415,16 @@ export const InstallOneagentModal = ({
                 return;
               }}
             />
-            <Button variant="accent" onClick={copyInstall1Liner} className="copyButton" color={install1linerCopied?"success":"neutral"}>
-              {!install1linerCopied ? <CopyIcon /> : <CheckmarkIcon />}
+            {/* <CodeSnippet showLineNumbers={false} lineBreaks={true} maxHeight={150}>
+              {install1Liner}
+            </CodeSnippet> */}
+            <Button
+              variant="accent"
+              onClick={copyInstall1Liner}
+              className="copyButton"
+              color={install1linerCopied ? "success" : "neutral"}
+            >
+              <Button.Prefix>{!install1linerCopied ? <CopyIcon /> : <CheckmarkIcon />}</Button.Prefix>
               Copy
             </Button>
           </FormField>

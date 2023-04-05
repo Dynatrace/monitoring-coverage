@@ -9,7 +9,8 @@ import {
   SelectOption,
   SelectedKeys,
   PasswordInput,
-  useToastNotification,
+  Text,
+  showToast,
 } from '@dynatrace/strato-components-preview';
 import { Cloud } from "../types/CloudTypes";
 import { functions } from "@dynatrace/util-app";
@@ -44,7 +45,6 @@ export const ConnectAWSModal = ({
   const [partition, setPartition] = useState<SelectedKeys | null>(["AWS_DEFAULT"]);
   const [accessKeyId, setAccessKeyId] = useState("");
   const [secretKeyId, setSecretKeyId] = useState("");
-  const { showToast } = useToastNotification();
 
   const realConnect = async () => {
     console.log("CloudConnectModal (real):", { name, auth, role, accountId, externalId, accessKeyId, secretKeyId });
@@ -130,10 +130,10 @@ export const ConnectAWSModal = ({
 
   return (
     <Modal title={`Add ${selectedCloud?.cloud} integration`} show={modalOpen} onDismiss={() => setModalOpen(false)}>
-      <Flex flexDirection="column">
+      <Flex flexDirection="column" gap={16}>
         <Flex flexDirection="row">
-          {selectedCloud?.icon && <img src={`./assets/` + selectedCloud.icon} className="iconStyle" />}
-          <span>&nbsp; Add {selectedCloud?.cloud} integration:</span>
+          <Text>{selectedCloud?.icon && <img src={`./assets/` + selectedCloud.icon} className="iconStyle" />}
+          &nbsp; Add {selectedCloud?.cloud} integration:</Text>
         </Flex>
         <FormField label="Connection name">
           <TextInput placeholder="For example, Dynatrace integration" value={name} onChange={setName} />
@@ -145,7 +145,7 @@ export const ConnectAWSModal = ({
           </Select>
         </FormField>
         {auth?.includes("key") && (
-          <div>
+          <Flex flexDirection="column" gap={16}>
             <Select selectedId={partition} onChange={setPartition}>
               <SelectOption id="AWS_DEFAULT">Default</SelectOption>
               <SelectOption id="AWS_US_GOV">US Gov</SelectOption>
@@ -157,10 +157,10 @@ export const ConnectAWSModal = ({
             <FormField label="Secret access key">
               <PasswordInput placeholder="Secret key" value={secretKeyId} onChange={setSecretKeyId} />
             </FormField>
-          </div>
+          </Flex>
         )}
         {auth?.includes("role") && (
-          <div>
+          <Flex flexDirection="column" gap={16}>
             <FormField label="IAM role that Dynatrace should use to get monitoring data">
               <TextInput placeholder="Role for this connection" value={role} onChange={setRole} />
             </FormField>
@@ -170,10 +170,10 @@ export const ConnectAWSModal = ({
             <FormField label="Token (use this value as the External ID for your IAM role)">
               <PasswordInput placeholder="********************" value={externalId} onChange={setExternalId} />
             </FormField>
-          </div>
+          </Flex>
         )}
-        <Flex flexItem flexGrow={0}>
-          <Button variant="accent" onClick={demoMode ? mockConnect : realConnect}>
+        <Flex flexGrow={0} justifyContent="flex-end">
+          <Button variant="emphasized" onClick={demoMode ? mockConnect : realConnect}>
             Connect
           </Button>
         </Flex>

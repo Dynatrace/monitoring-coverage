@@ -5,7 +5,9 @@ import {
   Button,
   TableColumn,
   Menu,
+  Text,
   TABLE_EXPANDABLE_DEFAULT_COLUMN,
+  useCurrentTheme,
 } from "@dynatrace/strato-components-preview";
 import { SyncOffIcon, SyncDoneIcon, SyncIcon, DotMenuIcon } from "@dynatrace/strato-icons";
 import { Colors } from "@dynatrace/strato-design-tokens";
@@ -55,6 +57,7 @@ export const CloudTable = ({
   const [oneagentModalOpen, setOneagentModalOpen] = useState(false);
   const [selectedCloud, setSelectedCloud] = useState<Cloud>();
   const [ips, setIps] = useState<string>("");
+  const theme = useCurrentTheme();
   useEffect(() => {
     if (selectedCloud) setIps(selectedCloud?.unmonitoredCloud?.map((sc) => sc.ipAddress).join(", "));
     else setIps("");
@@ -92,24 +95,24 @@ export const CloudTable = ({
         cell: ({ row }) => {
           if (row.original.cloudStatus)
             return (
-              <span>
+              <Text className="iconStyle">
                 <SyncDoneIcon />
-                <span>Connected</span>
-              </span>
+                Connected
+              </Text>
             );
           else if (row.original.oneagentHosts > 0)
             return (
-              <span style={criticalText}>
+              <Text style={criticalText} className="iconStyle">
                 <SyncOffIcon />
-                <span>Not setup</span>
-              </span>
+                Not setup
+              </Text>
             );
           else
             return (
-              <span>
+              <Text className="iconStyle">
                 <SyncOffIcon />
-                <span>Not setup</span>
-              </span>
+                Not setup
+              </Text>
             );
         },
       },
@@ -166,9 +169,9 @@ export const CloudTable = ({
         cell: ({ row }) => {
           if (!row.original.cloudStatus || coverageRatio(row) > 100)
             return (
-              <Flex minWidth={190}>
+              <Flex minWidth={200}>
                 <Button
-                  className="connectCloud"
+                  className="connectCloud actionButton"
                   width="full"
                   variant="accent"
                   onClick={() => {
@@ -176,10 +179,10 @@ export const CloudTable = ({
                     setCloudModalOpen(true);
                   }}
                 >
-                  <span>
+                  <Button.Prefix>
                     <SyncIcon />
-                    Connect cloud
-                  </span>
+                  </Button.Prefix>
+                  Connect cloud
                 </Button>
               </Flex>
             );
@@ -187,7 +190,7 @@ export const CloudTable = ({
             return (
               <Flex minWidth={200}>
                 <Button
-                  className="installOneagent"
+                  className="installOneagent actionButton"
                   width="full"
                   variant="emphasized"
                   onClick={() => {
@@ -195,10 +198,13 @@ export const CloudTable = ({
                     setOneagentModalOpen(true);
                   }}
                 >
-                  <span>
-                    <img src="./assets/oneagent.svg" className="iconStyle" />
-                    Install OneAgents
-                  </span>
+                  <Button.Prefix>
+                    <img
+                      src={theme === "light" ? "./assets/oneagent.svg" : "./assets/oneagent-white.svg"}
+                      className="iconStyle"
+                    />
+                  </Button.Prefix>
+                  Install OneAgents
                 </Button>
               </Flex>
             );
@@ -213,8 +219,10 @@ export const CloudTable = ({
             <Menu>
               <Menu.Trigger>
                 <Button style={{ padding: 0, margin: 0 }} variant="default">
-                  <Button.Prefix><DotMenuIcon /></Button.Prefix>
-                  </Button>
+                  <Button.Prefix>
+                    <DotMenuIcon />
+                  </Button.Prefix>
+                </Button>
               </Menu.Trigger>
               <Menu.Content>
                 <Menu.Item
@@ -274,7 +282,7 @@ export const CloudTable = ({
             } else
               return (
                 <Flex flexDirection="column">
-                  <p>No unmonitored hosts detected. Connect additional clouds.</p>
+                  <Text>No unmonitored hosts detected. Connect additional clouds.</Text>
                 </Flex>
               );
           }}
