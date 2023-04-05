@@ -56,7 +56,7 @@ export const CloudTable = ({
   const [selectedCloud, setSelectedCloud] = useState<Cloud>();
   const [ips, setIps] = useState<string>("");
   useEffect(() => {
-    if (selectedCloud) setIps(selectedCloud?.unmonitoredCloud?.map((sc) => sc.values?.ipAddress).join(", "));
+    if (selectedCloud) setIps(selectedCloud?.unmonitoredCloud?.map((sc) => sc.ipAddress).join(", "));
     else setIps("");
   }, [selectedCloud]);
 

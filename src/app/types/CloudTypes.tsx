@@ -1,25 +1,33 @@
 import { RecordV2Beta, RecordV2BetaValues } from "@dynatrace-sdk/client-query-v02";
+import { ResultRecord } from "@dynatrace-sdk/client-query";
 import { convertToColumnsFromWellFormedArray, TableColumn } from "@dynatrace/strato-components-preview";
 
-interface UnmonitoredCloudValues extends RecordV2BetaValues {
+// interface UnmonitoredCloudValues extends RecordV2BetaValues {
+//   id: string;
+//   'entity.name': string;
+//   'entity.detected_name': string;
+//   ipAddress: string;
+// }
+
+// interface UnmonitoredCloud extends RecordV2Beta {
+//   values: UnmonitoredCloudValues | null;
+// }
+
+interface UnmonitoredCloud extends ResultRecord {
   id: string;
   'entity.name': string;
   'entity.detected_name': string;
   ipAddress: string;
 }
 
-interface UnmonitoredCloud extends RecordV2Beta {
-  values: UnmonitoredCloudValues | null;
-}
-
 const UnmonitoredCloudCols = [
   {
-    accessor: "values.id",
+    accessor: "id",
     header: "Entity ID",
   },
-  { accessor: "values.'entity.name'", header: "Entity Name" },
-  { accessor: "values.'entity.detected_name'", header: "Detected Name" },
-  { accessor: "values.ipAddress", header: "IP Address" },
+  { accessor: "'entity.name'", header: "Entity Name" },
+  { accessor: "'entity.detected_name'", header: "Detected Name" },
+  { accessor: "ipAddress", header: "IP Address" },
 ] as TableColumn[];
 
 interface Cloud {

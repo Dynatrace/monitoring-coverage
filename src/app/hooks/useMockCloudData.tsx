@@ -41,18 +41,10 @@ const generateHostData = (count, entprefix = "CLOUDHOST", nameprefix = "cloud_")
   const hosts: UnmonitoredCloud[] = [];
   for (let i = 0; i < count; i++) {
     hosts.push({
-      values: {
         id: entprefix + `-` + i.toString().padStart(7, "0"),
         'entity.name': nameprefix + `_` + i.toString().padStart(3, "0"),
         'entity.detected_name': nameprefix + `_` + i.toString().padStart(3, "0"),
         ipAddress: `10.0.${(i / 254).toFixed(0)}.${(i % 254) + 1}`,
-      },
-      fields: [
-        { name: "id", type: "string" as FieldV2BetaType },
-        { name: "entity.name", type: "string" as FieldV2BetaType },
-        { name: "entity.detected_name", type: "string" as FieldV2BetaType },
-        { name: "ipAddress", type: "string" as FieldV2BetaType },
-      ],
     } as UnmonitoredCloud);
   }
   return hosts;

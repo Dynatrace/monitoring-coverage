@@ -16,14 +16,14 @@ export const HostsTable = ({
   const columns = useMemo(() => {
     // const cols = convertToColumns(unmonitoredCloud);
     const cols = [...UnmonitoredCloudCols];
-    const entCol = cols.find((c) => (c.id = "values.id"));
-    debugger;
+    const entCol = cols.find((c) => (c.id = "id"));
+    // debugger;
     if (entCol) {
       entCol.cell = ({ row }) => {
-        const intentLink = getIntentLink({ "dt.entity.host": row.original.values.id });
+        const intentLink = getIntentLink({ "dt.entity.host": row.original.id });
         return (
           <Link href={intentLink} target="_blank">
-            {row.original.values.id} <OpenWithIcon />
+            {row.original.id} <OpenWithIcon />
           </Link>
         );
       };
@@ -54,7 +54,7 @@ export const HostsTable = ({
             <Menu.Content>
               <Menu.Item
                 onSelect={() => {
-                  setIps(row.original.values.ipAddress);
+                  setIps(row.original.ipAddress);
                   setOneagentModalOpen(true);
                 }}
               >
