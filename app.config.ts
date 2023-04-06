@@ -4,10 +4,10 @@ const config: CliOptions = {
   //CHANGE THIS TO POINT TO YOUR ENVIRONMENT:
   environmentUrl: "https://umsaywsjuo.dev.apps.dynatracelabs.com/",
   //environmentUrl: "https://oqr47576.sprint.apps.dynatracelabs.com/",
-  icon: "./src/assets/MC-logo.png",
+  icon: "./src/assets/logo.png",
   app: {
     name: "Monitoring Coverage",
-    version: "0.0.10",
+    version: "0.0.11",
     description: "A sample app helping you get to 100% cloud coverage",
     id: "my.monitoring.coverage",
     scopes: [

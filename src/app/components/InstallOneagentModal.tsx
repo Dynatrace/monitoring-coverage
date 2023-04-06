@@ -283,7 +283,7 @@ export const InstallOneagentModal = ({
               }}
             />
             <Button
-              variant="accent"
+              variant="emphasized"
               onClick={copyToClipboard}
               className="copyButton"
               color={ipsCopied ? "success" : "neutral"}
@@ -379,7 +379,7 @@ export const InstallOneagentModal = ({
             </CodeSnippet> */}
             <Flex flexDirection="row" gap={12} alignItems="baseline">
               <Button
-                variant="accent"
+                variant="emphasized"
                 onClick={copyDownload1Liner}
                 className="dlButton"
                 color={dl1linerCopied ? "success" : "neutral"}
@@ -417,7 +417,7 @@ export const InstallOneagentModal = ({
               {install1Liner}
             </CodeSnippet> */}
             <Button
-              variant="accent"
+              variant="emphasized"
               onClick={copyInstall1Liner}
               className="copyButton"
               color={install1linerCopied ? "success" : "neutral"}

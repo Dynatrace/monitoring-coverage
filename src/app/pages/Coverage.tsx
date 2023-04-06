@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Flex, Heading, LoadingIndicator, Switch,  } from '@dynatrace/strato-components-preview';
+import { Flex, Heading, LoadingIndicator, Switch } from "@dynatrace/strato-components-preview";
 import { CloudTable } from "../components/CloudTable";
 import { useMockCloudData } from "../hooks/useMockCloudData";
 import { useRealCloudData } from "../hooks/useRealCloudData";
 import { useTokens } from "../hooks/useTokens";
 import "./Coverage.css";
 
-export const Coverage = ({ gen2Url }) => {
-  const [demoMode, setDemoMode] = useState(true);
+export const Coverage = ({ gen2Url, demoMode, setDemoMode }) => {
   const { mockCloudData, setMockCloudData } = useMockCloudData();
   const { realCloudData, fetchQueries, runningDQL } = useRealCloudData();
-  const {configToken, getConfigToken} = useTokens();
+  const { configToken, getConfigToken } = useTokens();
 
   useEffect(() => {
     if (!demoMode) fetchQueries();
@@ -18,15 +17,12 @@ export const Coverage = ({ gen2Url }) => {
 
   return (
     <Flex flexDirection="column">
-      <Flex flexDirection="row" justifyContent="space-between" alignItems="flex-end">
-        <Heading level={1}>Monitoring Coverage</Heading>
+      <Flex flexDirection="row">
+        {!demoMode && <Heading level={1}>Monitoring Coverage</Heading>}
+        <LoadingIndicator loading={runningDQL} />
+      </Flex>
+      <Flex flexDirection="row" justifyContent="center" alignItems="flex-end">
         <span className="tinyText">{demoMode ? "(showing mock data)" : ""}</span>
-        <Flex flexDirection="row">
-          <LoadingIndicator loading={runningDQL}/>
-        <Switch value={demoMode} onChange={setDemoMode}>
-          Demo mode
-        </Switch>
-        </Flex>
       </Flex>
 
       <Flex flexDirection="column">

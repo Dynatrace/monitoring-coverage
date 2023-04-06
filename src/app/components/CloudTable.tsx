@@ -8,6 +8,7 @@ import {
   Text,
   TABLE_EXPANDABLE_DEFAULT_COLUMN,
   useCurrentTheme,
+  LoadingIndicator,
 } from "@dynatrace/strato-components-preview";
 import { SyncOffIcon, SyncDoneIcon, SyncIcon, DotMenuIcon } from "@dynatrace/strato-icons";
 import { Colors } from "@dynatrace/strato-design-tokens";
@@ -41,6 +42,7 @@ export const CloudTable = ({
   setMockCloudData,
   configToken,
   getConfigToken,
+  runningDQL,
 }: {
   data: Cloud[];
   gen2Url: string;
