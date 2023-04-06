@@ -7,7 +7,7 @@ const config: CliOptions = {
   icon: "./src/assets/logo.png",
   app: {
     name: "Monitoring Coverage",
-    version: "0.0.8",
+    version: "0.0.9",
     description: "A sample app helping you get to 100% cloud coverage",
     id: "my.monitoring.coverage",
     scopes: [
@@ -17,6 +17,9 @@ const config: CliOptions = {
       { name: "environment-api:api-tokens:write", comment: "Create Installer token" },
       { name: "storage:entities:read", comment: "Required for Grail"}
     ],
+    pageTokens: {
+      root: '/'
+    }
   },
 };
 
