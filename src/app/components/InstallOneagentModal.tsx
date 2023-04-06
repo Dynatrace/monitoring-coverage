@@ -48,7 +48,6 @@ export const InstallOneagentModal = ({
   modalOpen,
   setModalOpen,
   selectedCloud,
-  apiUrl,
   gen2Url,
   demoMode,
   ips,
@@ -57,7 +56,6 @@ export const InstallOneagentModal = ({
   modalOpen: boolean;
   setModalOpen;
   selectedCloud?: Cloud;
-  apiUrl: string;
   gen2Url: string;
   demoMode: boolean;
   ips: string;

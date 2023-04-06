@@ -6,7 +6,7 @@ import { useRealCloudData } from "../hooks/useRealCloudData";
 import { useTokens } from "../hooks/useTokens";
 import "./Coverage.css";
 
-export const Coverage = ({ apiUrl, gen2Url }) => {
+export const Coverage = ({ gen2Url }) => {
   const [demoMode, setDemoMode] = useState(true);
   const { mockCloudData, setMockCloudData } = useMockCloudData();
   const { realCloudData, fetchQueries, runningDQL } = useRealCloudData();
@@ -32,7 +32,6 @@ export const Coverage = ({ apiUrl, gen2Url }) => {
       <Flex flexDirection="column">
         <CloudTable
           data={demoMode ? mockCloudData : realCloudData}
-          apiUrl={apiUrl}
           gen2Url={gen2Url}
           fetchQueries={fetchQueries}
           demoMode={demoMode}

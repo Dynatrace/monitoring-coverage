@@ -35,7 +35,6 @@ const coverageRatio = (row) =>
 
 export const CloudTable = ({
   data,
-  apiUrl,
   gen2Url,
   fetchQueries,
   demoMode,
@@ -44,7 +43,6 @@ export const CloudTable = ({
   getConfigToken,
 }: {
   data: Cloud[];
-  apiUrl: string;
   gen2Url: string;
   fetchQueries: () => void;
   demoMode: boolean;
@@ -294,7 +292,6 @@ export const CloudTable = ({
             modalOpen={cloudModalOpen && selectedCloud?.cloudType != "EC2" && selectedCloud?.cloudType != "AZURE"}
             setModalOpen={setCloudModalOpen}
             selectedCloud={selectedCloud}
-            apiUrl={apiUrl}
             gen2Url={gen2Url}
             demoMode={demoMode}
             setMockCloudData={setMockCloudData}
@@ -303,7 +300,6 @@ export const CloudTable = ({
             modalOpen={cloudModalOpen && selectedCloud?.cloudType == "EC2"}
             setModalOpen={setCloudModalOpen}
             selectedCloud={selectedCloud}
-            apiUrl={apiUrl}
             gen2Url={gen2Url}
             demoMode={demoMode}
             setMockCloudData={setMockCloudData}
@@ -314,7 +310,6 @@ export const CloudTable = ({
             modalOpen={cloudModalOpen && selectedCloud?.cloudType == "AZURE"}
             setModalOpen={setCloudModalOpen}
             selectedCloud={selectedCloud}
-            apiUrl={apiUrl}
             gen2Url={gen2Url}
             demoMode={demoMode}
             setMockCloudData={setMockCloudData}
@@ -328,7 +323,6 @@ export const CloudTable = ({
           modalOpen={oneagentModalOpen}
           setModalOpen={setOneagentModalOpen}
           selectedCloud={selectedCloud}
-          apiUrl={apiUrl}
           gen2Url={gen2Url}
           demoMode={demoMode}
           ips={ips}

@@ -20,7 +20,6 @@ export const ConnectAWSModal = ({
   modalOpen,
   setModalOpen,
   selectedCloud,
-  apiUrl,
   gen2Url,
   demoMode,
   setMockCloudData,
@@ -30,7 +29,6 @@ export const ConnectAWSModal = ({
   modalOpen: boolean;
   setModalOpen: Dispatch<SetStateAction<boolean>>;
   selectedCloud?: Cloud;
-  apiUrl: string;
   gen2Url: string;
   demoMode: boolean;
   setMockCloudData: React.Dispatch<React.SetStateAction<Cloud[]>>;
