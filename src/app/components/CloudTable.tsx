@@ -213,6 +213,7 @@ export const CloudTable = ({
       },
       {
         header: " ",
+        alignment: "center",
         width: 40,
         cell: ({ row }) => {
           return (
