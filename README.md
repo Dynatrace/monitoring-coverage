@@ -54,8 +54,10 @@ fetch dt.entity.EC2_INSTANCE
 
 ```
 fetch dt.entity.EC2_INSTANCE
-| filterOut in(id,entitySelector("type(EC2_INSTANCE),toRelationships.runsOn(type(host),isMonitoringCandidate(false))"))
-| fieldsAdd entity.detected_name, ipAddress = localIp
+| fieldsAdd host=runs[dt.entity.host], entity.detected_name, ipAddress = localIp
+| lookup [fetch dt.entity.host | fieldsAdd isMonitoringCandidate], sourceField:host, lookupField:id, prefix:"host."
+| filterOut host.isMonitoringCandidate == false 
+| fields id, entity.name, entity.detected_name, ipAddress = localIp
 ```
 
 ### Azure VMs
@@ -66,8 +68,10 @@ fetch dt.entity.azure_vm
 
 ```
 fetch dt.entity.azure_vm
-| filterOut in(id,entitySelector("type(azure_vm),toRelationships.runsOn(type(host),isMonitoringCandidate(false))"))
-| fieldsAdd entity.detected_name, ipAddress = ipAddress[0]
+| fieldsAdd host=runs[dt.entity.host], entity.detected_name, ipAddress 
+| lookup [fetch dt.entity.host | fieldsAdd isMonitoringCandidate], sourceField:host, lookupField:id, prefix:"host."
+| filterOut host.isMonitoringCandidate == false 
+| fields id, entity.name, entity.detected_name, ipAddress
 ```
 
 ### GCP CE VMs

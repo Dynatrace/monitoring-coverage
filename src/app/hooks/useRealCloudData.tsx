@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { ErrorV2Beta, queryClient, QueryResponseV2Beta, RecordV2Beta } from "@dynatrace-sdk/client-query-v02";
 import { queryExecutionClient, queryAssistanceClient, QueryStartResponse } from "@dynatrace-sdk/client-query";
 import { showToast } from "@dynatrace/strato-components-preview";
 import { Cloud, UnmonitoredCloud } from "../types/CloudTypes";
@@ -107,9 +106,14 @@ export const useRealCloudData = () => {
       const awsUnmonitoredHostsQuery = queryExecutionClient.queryExecute({
         body: {
           //get all AWS hosts w/o OneAgent
+          // query: `fetch dt.entity.EC2_INSTANCE
+          //     | filterOut in(id,entitySelector("type(EC2_INSTANCE),toRelationships.runsOn(type(host),isMonitoringCandidate(false))"))
+          //     | fieldsAdd entity.detected_name, ipAddress = localIp`,
           query: `fetch dt.entity.EC2_INSTANCE
-              | filterOut in(id,entitySelector("type(EC2_INSTANCE),toRelationships.runsOn(type(host),isMonitoringCandidate(false))"))
-              | fieldsAdd entity.detected_name, ipAddress = localIp`,
+          | fieldsAdd host=runs[dt.entity.host], entity.detected_name, ipAddress = localIp
+          | lookup [fetch dt.entity.host | fieldsAdd isMonitoringCandidate], sourceField:host, lookupField:id, prefix:"host."
+          | filterOut host.isMonitoringCandidate == false 
+          | fields id, entity.name, entity.detected_name, ipAddress = localIp`,
           requestTimeoutMilliseconds: TIMEOUT,
         },
       });
@@ -125,9 +129,14 @@ export const useRealCloudData = () => {
       const azureUnmonitoredHostsQuery = queryExecutionClient.queryExecute({
         body: {
           //get all Azure hosts w/o OneAgent
+          // query: `fetch dt.entity.azure_vm
+          //     | filterOut in(id,entitySelector("type(azure_vm),toRelationships.runsOn(type(host),isMonitoringCandidate(false))"))
+          //     | fieldsAdd entity.detected_name, ipAddress = ipAddress[0]`,
           query: `fetch dt.entity.azure_vm
-              | filterOut in(id,entitySelector("type(azure_vm),toRelationships.runsOn(type(host),isMonitoringCandidate(false))"))
-              | fieldsAdd entity.detected_name, ipAddress = ipAddress[0]`,
+          | fieldsAdd host=runs[dt.entity.host], entity.detected_name, ipAddress 
+          | lookup [fetch dt.entity.host | fieldsAdd isMonitoringCandidate], sourceField:host, lookupField:id, prefix:"host."
+          | filterOut host.isMonitoringCandidate == false 
+          | fields id, entity.name, entity.detected_name, ipAddress`,
           requestTimeoutMilliseconds: TIMEOUT,
         },
       });
@@ -163,12 +172,20 @@ export const useRealCloudData = () => {
       const vmwareUnmonitoredHostsQuery = queryExecutionClient.queryExecute({
         body: {
           //get all vmware hosts w/o OneAgent
+          // query: `fetch dt.entity.virtualmachine
+          //     | fieldsAdd ip = ipAddress[0]
+          //     | lookup [fetch dt.entity.host | filter in(id,entitySelector("type(host),fromRelationships.runsOn(type(virtualmachine))")) | fieldsAdd ip = ipAddress[0]], lookupField: ip, sourceField:ip
+          //     | filter isNull(lookup.ip)
+          //     | fields id, entity.name, ipAddress=ip
+          //     | limit 100000`,
           query: `fetch dt.entity.virtualmachine
-              | fieldsAdd ip = ipAddress[0]
-              | lookup [fetch dt.entity.host | filter in(id,entitySelector("type(host),fromRelationships.runsOn(type(virtualmachine))")) | fieldsAdd ip = ipAddress[0]], lookupField: ip, sourceField:ip
-              | filter isNull(lookup.ip)
-              | fields id, entity.name, ipAddress=ip
-              | limit 100000`,
+          | fieldsAdd ip = ipAddress[0]
+          | lookup [fetch dt.entity.host 
+            | filter in(id,entitySelector("type(host),fromRelationships.runsOn(type(virtualmachine))")) 
+            | fieldsAdd ip = ipAddress[0]], lookupField: ip, sourceField:ip
+          | filter isNull(lookup.ip)
+          | fields id, entity.name, ipAddress=ip
+          | limit 100000`,
           requestTimeoutMilliseconds: TIMEOUT,
         },
       });
