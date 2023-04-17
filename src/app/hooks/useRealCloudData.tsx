@@ -1,5 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { queryExecutionClient, queryAssistanceClient, QueryStartResponse } from "@dynatrace-sdk/client-query";
+import { useEffect, useState } from "react";
+import {
+  queryExecutionClient,
+  queryAssistanceClient,
+  QueryStartResponse,
+} from "@dynatrace-sdk/client-query";
 import { showToast } from "@dynatrace/strato-components-preview";
 import { Cloud, UnmonitoredCloud } from "../types/CloudTypes";
 
@@ -57,13 +61,18 @@ export const useRealCloudData = () => {
   //verify queries before firing them
   useEffect(() => {
     (async () => {
-      const verify_GCP_ALL_HOSTS_QUERY = await queryAssistanceClient.queryVerify({
-        body: { query: GCP_ALL_HOSTS_QUERY },
-      });
-      const verify_GCP_UNMONITORED_HOSTS_QUERY = await queryAssistanceClient.queryVerify({
-        body: { query: GCP_UNMONITORED_HOSTS_QUERY },
-      });
-      setGCPValid(verify_GCP_ALL_HOSTS_QUERY.valid && verify_GCP_UNMONITORED_HOSTS_QUERY.valid);
+      const verify_GCP_ALL_HOSTS_QUERY =
+        await queryAssistanceClient.queryVerify({
+          body: { query: GCP_ALL_HOSTS_QUERY },
+        });
+      const verify_GCP_UNMONITORED_HOSTS_QUERY =
+        await queryAssistanceClient.queryVerify({
+          body: { query: GCP_UNMONITORED_HOSTS_QUERY },
+        });
+      setGCPValid(
+        verify_GCP_ALL_HOSTS_QUERY.valid &&
+          verify_GCP_UNMONITORED_HOSTS_QUERY.valid
+      );
 
       setQueriesVerified(true);
     })();
@@ -192,13 +201,10 @@ export const useRealCloudData = () => {
 
       //Update clouds with query data
       oneAgentHostsQuery.then((res) => {
-        //   console.log("oneAgentHostsQuery:", res.result?.records);
         if (res.result?.records) {
           setRealCloudData((oldClouds) => {
             const newClouds = [...oldClouds]; //new object to update state
             res.result?.records?.forEach((r) => {
-              // const vals = r?.values || {};
-              // debugger;
               switch (r?.cloud) {
                 case "EC2":
                   {
@@ -208,7 +214,9 @@ export const useRealCloudData = () => {
                   break;
                 case "GOOGLE_CLOUD_PLATFORM":
                   {
-                    const nc = newClouds.find((c) => c.cloudType == "GOOGLE_CLOUD_PLATFORM");
+                    const nc = newClouds.find(
+                      (c) => c.cloudType == "GOOGLE_CLOUD_PLATFORM"
+                    );
                     if (nc) nc.oneagentHosts = Number(r?.count);
                   }
                   break;
@@ -229,9 +237,6 @@ export const useRealCloudData = () => {
             return newClouds;
           });
         }
-        // if (res.error) {
-        //   toastError(res.error);
-        // }
       });
       awsAllHostsQuery.then(
         (res) => {
@@ -255,7 +260,8 @@ export const useRealCloudData = () => {
           setRealCloudData((oldClouds) => {
             const newClouds = [...oldClouds]; //new object to update state
             const nc = newClouds.find((c) => c.cloudType == "EC2");
-            if (nc) nc.unmonitoredCloud = res.result?.records as UnmonitoredCloud[];
+            if (nc)
+              nc.unmonitoredCloud = res.result?.records as UnmonitoredCloud[];
             return newClouds;
           });
         },
@@ -279,11 +285,11 @@ export const useRealCloudData = () => {
       );
       azureUnmonitoredHostsQuery.then(
         (res) => {
-          //   console.log("azureHostsQuery:", res.result?.records);
           setRealCloudData((oldClouds) => {
             const newClouds = [...oldClouds]; //new object to update state
             const nc = newClouds.find((c) => c.cloudType == "AZURE");
-            if (nc) nc.unmonitoredCloud = res.result?.records as UnmonitoredCloud[];
+            if (nc)
+              nc.unmonitoredCloud = res.result?.records as UnmonitoredCloud[];
             return newClouds;
           });
         },
@@ -293,7 +299,9 @@ export const useRealCloudData = () => {
         (res) => {
           setRealCloudData((oldClouds) => {
             const newClouds = [...oldClouds];
-            const nc = newClouds.find((c) => c.cloudType == "GOOGLE_CLOUD_PLATFORM");
+            const nc = newClouds.find(
+              (c) => c.cloudType == "GOOGLE_CLOUD_PLATFORM"
+            );
             if (nc && Array.isArray(res.result?.records)) {
               const num = res.result?.records[0]?.count as number;
               nc.cloudHosts = num;
@@ -307,11 +315,13 @@ export const useRealCloudData = () => {
       );
       gcpUnmonitoredHostsQuery.then(
         (res) => {
-          //   console.log("gcpHostsQuery:", res.result?.records);
           setRealCloudData((oldClouds) => {
             const newClouds = [...oldClouds]; //new object to update state
-            const nc = newClouds.find((c) => c.cloudType == "GOOGLE_CLOUD_PLATFORM");
-            if (nc) nc.unmonitoredCloud = res.result?.records as UnmonitoredCloud[];
+            const nc = newClouds.find(
+              (c) => c.cloudType == "GOOGLE_CLOUD_PLATFORM"
+            );
+            if (nc)
+              nc.unmonitoredCloud = res.result?.records as UnmonitoredCloud[];
             return newClouds;
           });
         },
@@ -335,11 +345,11 @@ export const useRealCloudData = () => {
       );
       vmwareUnmonitoredHostsQuery.then(
         (res) => {
-          //   console.log("vmwareHostsQuery:", res.result?.records);
           setRealCloudData((oldClouds) => {
             const newClouds = [...oldClouds]; //new object to update state
             const nc = newClouds.find((c) => c.cloudType == "VMWare");
-            if (nc) nc.unmonitoredCloud = res.result?.records as UnmonitoredCloud[];
+            if (nc)
+              nc.unmonitoredCloud = res.result?.records as UnmonitoredCloud[];
             return newClouds;
           });
         },

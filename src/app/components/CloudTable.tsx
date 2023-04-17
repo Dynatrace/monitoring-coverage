@@ -7,10 +7,13 @@ import {
   Menu,
   Text,
   TABLE_EXPANDABLE_DEFAULT_COLUMN,
-  useCurrentTheme,
-  LoadingIndicator,
 } from "@dynatrace/strato-components-preview";
-import { SyncOffIcon, SyncDoneIcon, SyncIcon, DotMenuIcon } from "@dynatrace/strato-icons";
+import {
+  SyncOffIcon,
+  SyncDoneIcon,
+  SyncIcon,
+  DotMenuIcon,
+} from "@dynatrace/strato-icons";
 import { Colors } from "@dynatrace/strato-design-tokens";
 import { ConnectCloudModal } from "./ConnectCloudModal";
 import { InstallOneagentModal } from "./InstallOneagentModal";
@@ -19,6 +22,7 @@ import "./CloudTable.css";
 import { ConnectAWSModal } from "./ConnectAWSModal";
 import { ConnectAzureModal } from "./ConnectAzureModal";
 import { HostsTable } from "./HostsTable";
+import { OneAgentIcon } from "../icons/OneAgent";
 
 const criticalText = {
   color: Colors.Text.Critical.Default,
@@ -32,34 +36,36 @@ const successText = {
 };
 
 const coverageRatio = (row) =>
-  row.original.cloudStatus ? ((row.original.oneagentHosts || 0) / row.original.cloudHosts) * 100 : NaN;
+  row.original.cloudStatus
+    ? ((row.original.oneagentHosts || 0) / row.original.cloudHosts) * 100
+    : NaN;
+
+type CloudTableProps = {
+  data: Cloud[];
+  gen2Url: string;
+  fetchQueries: () => void;
+  setMockCloudData: React.Dispatch<React.SetStateAction<Cloud[]>>;
+  configToken: string | undefined;
+  getConfigToken: () => Promise<string>;
+};
 
 export const CloudTable = ({
   data,
   gen2Url,
   fetchQueries,
-  demoMode,
   setMockCloudData,
   configToken,
   getConfigToken,
-  runningDQL,
-}: {
-  data: Cloud[];
-  gen2Url: string;
-  fetchQueries: () => void;
-  demoMode: boolean;
-  setMockCloudData: React.Dispatch<React.SetStateAction<Cloud[]>>;
-  runningDQL: boolean;
-  configToken: string | undefined;
-  getConfigToken: () => Promise<string>;
-}) => {
+}: CloudTableProps) => {
   const [cloudModalOpen, setCloudModalOpen] = useState(false);
   const [oneagentModalOpen, setOneagentModalOpen] = useState(false);
   const [selectedCloud, setSelectedCloud] = useState<Cloud>();
   const [ips, setIps] = useState<string>("");
-  const theme = useCurrentTheme();
   useEffect(() => {
-    if (selectedCloud) setIps(selectedCloud?.unmonitoredCloud?.map((sc) => sc.ipAddress).join(", "));
+    if (selectedCloud)
+      setIps(
+        selectedCloud?.unmonitoredCloud?.map((sc) => sc.ipAddress).join(", ")
+      );
     else setIps("");
   }, [selectedCloud]);
 
@@ -82,7 +88,10 @@ export const CloudTable = ({
         cell: ({ row }) => {
           return (
             <span>
-              <img src={`./assets/${row.original.icon}`} className="iconStyle" />
+              <img
+                src={`./assets/${row.original.icon}`}
+                className="iconStyle"
+              />
               <span>{row.original.cloud}</span>
             </span>
           );
@@ -141,9 +150,11 @@ export const CloudTable = ({
         width: 120,
         cell: ({ row }) => {
           const coverage = coverageRatio(row);
-          if (coverage > 100) return <span style={criticalText}>&gt; 100%</span>;
+          if (coverage > 100)
+            return <span style={criticalText}>&gt; 100%</span>;
           if (coverage == 100) return <span style={successText}>100%</span>;
-          if (!isNaN(coverage) && coverage < 90) return <span style={warningText}>{coverage.toFixed(0)}%</span>;
+          if (!isNaN(coverage) && coverage < 90)
+            return <span style={warningText}>{coverage.toFixed(0)}%</span>;
           if (!isNaN(coverage)) return <span>{coverage.toFixed(0)}%</span>;
           return <span>-</span>;
         },
@@ -154,13 +165,13 @@ export const CloudTable = ({
         cell: ({ row }) => {
           const coverage = coverageRatio(row);
           if (!row.original.cloudStatus && row.original.oneagentHosts > 0)
-            return <span style={criticalText}>Critical</span>;
-          if (coverage > 100) return <span style={criticalText}>Critical</span>;
-          if (coverage == 100) return <span>-</span>;
-          if (coverage >= 90) return <span>Low</span>;
-          if (coverage > 70) return <span>Medium</span>;
-          if (coverage >= 0) return <span style={warningText}>High</span>;
-          return <span>-</span>;
+            return <Text style={criticalText}>Critical</Text>;
+          if (coverage > 100) return <Text style={criticalText}>Critical</Text>;
+          if (coverage == 100) return "-";
+          if (coverage >= 90) return "Low";
+          if (coverage > 70) return "Medium";
+          if (coverage >= 0) return <Text style={warningText}>High</Text>;
+          return "-";
         },
       },
       {
@@ -169,44 +180,35 @@ export const CloudTable = ({
         cell: ({ row }) => {
           if (!row.original.cloudStatus || coverageRatio(row) > 100)
             return (
-              <Flex minWidth={200}>
-                <Button
-                  className="connectCloud actionButton"
-                  width="full"
-                  variant="accent"
-                  onClick={() => {
-                    setSelectedCloud(row.original);
-                    setCloudModalOpen(true);
-                  }}
-                >
-                  <Button.Prefix>
-                    <SyncIcon />
-                  </Button.Prefix>
-                  Connect cloud
-                </Button>
-              </Flex>
+              <Button
+                width="full"
+                variant="accent"
+                onClick={() => {
+                  setSelectedCloud(row.original);
+                  setCloudModalOpen(true);
+                }}
+              >
+                <Button.Prefix>
+                  <SyncIcon />
+                </Button.Prefix>
+                Connect cloud
+              </Button>
             );
           if (coverageRatio(row) < 100)
             return (
-              <Flex minWidth={200}>
-                <Button
-                  className="installOneagent actionButton"
-                  width="full"
-                  variant="emphasized"
-                  onClick={() => {
-                    setSelectedCloud(row.original);
-                    setOneagentModalOpen(true);
-                  }}
-                >
-                  <Button.Prefix>
-                    <img
-                      src={theme === "light" ? "./assets/oneagent.svg" : "./assets/oneagent-white.svg"}
-                      className="iconStyle"
-                    />
-                  </Button.Prefix>
-                  Install OneAgents
-                </Button>
-              </Flex>
+              <Button
+                width="full"
+                variant="emphasized"
+                onClick={() => {
+                  setSelectedCloud(row.original);
+                  setOneagentModalOpen(true);
+                }}
+              >
+                <Button.Prefix>
+                  <OneAgentIcon />
+                </Button.Prefix>
+                Install OneAgents
+              </Button>
             );
           return <Flex>-</Flex>;
         },
@@ -219,7 +221,7 @@ export const CloudTable = ({
           return (
             <Menu>
               <Menu.Trigger>
-                <Button style={{ padding: 0, margin: 0 }} variant="default">
+                <Button variant="default">
                   <Button.Prefix>
                     <DotMenuIcon />
                   </Button.Prefix>
@@ -257,22 +259,24 @@ export const CloudTable = ({
     []
   );
 
-  const tableData = useMemo<Cloud[]>(() => {
-    // console.log("useMemo:", data);
-    return data;
-  }, [data]);
-
   return (
     <div className="cloudTable">
       <DataTable
         columns={columns}
-        data={tableData}
-        variant={{ contained: true, rowSeparation: "horizontalDividers", verticalDividers: true }}
+        data={data}
+        variant={{
+          contained: true,
+          rowSeparation: "horizontalDividers",
+          verticalDividers: true,
+        }}
         resizable={true}
       >
         <DataTable.ExpandableRow>
           {({ row }) => {
-            if (Array.isArray(row.unmonitoredCloud) && row.unmonitoredCloud.length > 0) {
+            if (
+              Array.isArray(row.unmonitoredCloud) &&
+              row.unmonitoredCloud.length > 0
+            ) {
               return (
                 <HostsTable
                   unmonitoredCloud={row.unmonitoredCloud}
@@ -283,29 +287,32 @@ export const CloudTable = ({
             } else
               return (
                 <Flex flexDirection="column">
-                  <Text>No unmonitored hosts detected. Connect additional clouds.</Text>
+                  <Text>
+                    No unmonitored hosts detected. Connect additional clouds.
+                  </Text>
                 </Flex>
               );
           }}
         </DataTable.ExpandableRow>
       </DataTable>
       {cloudModalOpen && (
-        <div>
+        <>
           <ConnectCloudModal
-            modalOpen={cloudModalOpen && selectedCloud?.cloudType != "EC2" && selectedCloud?.cloudType != "AZURE"}
+            modalOpen={
+              cloudModalOpen &&
+              selectedCloud?.cloudType != "EC2" &&
+              selectedCloud?.cloudType != "AZURE"
+            }
             setModalOpen={setCloudModalOpen}
             selectedCloud={selectedCloud}
             gen2Url={gen2Url}
-            demoMode={demoMode}
-            setMockCloudData={setMockCloudData}
           />
           <ConnectAWSModal
             modalOpen={cloudModalOpen && selectedCloud?.cloudType == "EC2"}
             setModalOpen={setCloudModalOpen}
             selectedCloud={selectedCloud}
             gen2Url={gen2Url}
-            demoMode={demoMode}
-            setMockCloudData={setMockCloudData}
+
             configToken={configToken}
             getConfigToken={getConfigToken}
           />
@@ -314,12 +321,10 @@ export const CloudTable = ({
             setModalOpen={setCloudModalOpen}
             selectedCloud={selectedCloud}
             gen2Url={gen2Url}
-            demoMode={demoMode}
-            setMockCloudData={setMockCloudData}
             configToken={configToken}
             getConfigToken={getConfigToken}
           />
-        </div>
+        </>
       )}
       {oneagentModalOpen && (
         <InstallOneagentModal
@@ -327,9 +332,7 @@ export const CloudTable = ({
           setModalOpen={setOneagentModalOpen}
           selectedCloud={selectedCloud}
           gen2Url={gen2Url}
-          demoMode={demoMode}
           ips={ips}
-          setMockCloudData={setMockCloudData}
         />
       )}
     </div>

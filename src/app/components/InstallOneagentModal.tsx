@@ -12,7 +12,6 @@ import {
   TextArea,
   Text,
   showToast,
-  CodeSnippet,
 } from "@dynatrace/strato-components-preview";
 import {
   deploymentClient,
@@ -29,30 +28,19 @@ import {
   ApiTokenCreate,
   ApiTokenCreateScopesItem,
 } from "@dynatrace-sdk/client-classic-environment-v2";
-// import { HttpClientResponse } from "@dynatrace-sdk/client-classic-environment-v1/types/packages/http-client/src/";
 import {
   CopyIcon,
   DownloadIcon,
-  PlayIcon,
   CheckmarkIcon,
   UnfoldMoreIcon,
   UnfoldLessIcon,
 } from "@dynatrace/strato-icons";
 import { Cloud, UnmonitoredCloud } from "../types/CloudTypes";
 import { downloadLatestAgentInstaller } from "../Workarounds.js";
-import "./InstallOneagentModal.css";
 
 const TEXTCOLS = 120;
 
-export const InstallOneagentModal = ({
-  modalOpen,
-  setModalOpen,
-  selectedCloud,
-  gen2Url,
-  demoMode,
-  ips,
-  setMockCloudData,
-}: {
+type InstallOneagentModalProps = {
   modalOpen: boolean;
   setModalOpen;
   selectedCloud?: Cloud;
@@ -60,7 +48,15 @@ export const InstallOneagentModal = ({
   demoMode: boolean;
   ips: string;
   setMockCloudData: React.Dispatch<React.SetStateAction<Cloud[]>>;
-}) => {
+};
+
+export const InstallOneagentModal = ({
+  modalOpen,
+  setModalOpen,
+  selectedCloud,
+  gen2Url,
+  ips,
+}: InstallOneagentModalProps) => {
   //override broken SDK with workaround
   deploymentClient.downloadLatestAgentInstaller = downloadLatestAgentInstaller;
   //visual states
@@ -71,8 +67,12 @@ export const InstallOneagentModal = ({
   const [downloading, setDownloading] = useState(false);
   //form states
   const [mode, setMode] = useState<SelectedKeys | null>(["infrastructure"]);
-  const [installerType, setInstallerType] = useState<SelectedKeys | null>(["default"]);
-  const [disabledInstallerTypes, setDisabledInstallerTypes] = useState<string[]>([]);
+  const [installerType, setInstallerType] = useState<SelectedKeys | null>([
+    "default",
+  ]);
+  const [disabledInstallerTypes, setDisabledInstallerTypes] = useState<
+    string[]
+  >([]);
   const [arch, setArch] = useState<SelectedKeys | null>(["all"]);
   const [disabledArchs, setDisabledArchs] = useState<string[]>([]);
   const [osType, setOsType] = useState<SelectedKeys | null>(["unix"]);
@@ -91,7 +91,9 @@ export const InstallOneagentModal = ({
       abortSignal?: AbortSignal | undefined;
     } = {
       osType:
-        (Array.isArray(osType) && osType.length > 0 && (osType[0] as GetAgentInstallerMetaInfoPathOsType)) ||
+        (Array.isArray(osType) &&
+          osType.length > 0 &&
+          (osType[0] as GetAgentInstallerMetaInfoPathOsType)) ||
         GetAgentInstallerMetaInfoPathOsType["unix"],
       installerType:
         (Array.isArray(installerType) &&
@@ -100,7 +102,9 @@ export const InstallOneagentModal = ({
         GetAgentInstallerMetaInfoPathInstallerType["default"],
       flavor: undefined,
       arch:
-        (Array.isArray(arch) && arch.length > 0 && (arch[0] as GetAgentInstallerMetaInfoQueryArch)) ||
+        (Array.isArray(arch) &&
+          arch.length > 0 &&
+          (arch[0] as GetAgentInstallerMetaInfoQueryArch)) ||
         GetAgentInstallerMetaInfoQueryArch["all"],
       bitness: undefined,
       abortSignal: undefined,
@@ -111,7 +115,6 @@ export const InstallOneagentModal = ({
         setVersion(value.latestAgentVersion || "");
       },
       (reason) => {
-        console.warn("getAgentInstallerMetaInfo failed:", reason.message, reason.response.url);
         showToast({
           title: "Fetch installer metainfo failed",
           type: "critical",
@@ -138,7 +141,6 @@ export const InstallOneagentModal = ({
         setToken(value.token || "TOKEN_MISSING");
       },
       (reason) => {
-        console.warn("accessTokensApiTokensClient.createApiToken failed:", reason.message, reason.response.url);
         showToast({
           title: "Create download token failed",
           type: "critical",
@@ -259,7 +261,12 @@ export const InstallOneagentModal = ({
   };
 
   return (
-    <Modal title={`Install OneAgents`} show={modalOpen} onDismiss={() => setModalOpen(false)} dismissible={true}>
+    <Modal
+      title={`Install OneAgents`}
+      show={modalOpen}
+      onDismiss={() => setModalOpen(false)}
+      dismissible={true}
+    >
       <Flex flexDirection="column" flex={0} gap={16}>
         {/* Heading */}
         <Text>
@@ -289,7 +296,9 @@ export const InstallOneagentModal = ({
               color={ipsCopied ? "success" : "neutral"}
             >
               {/* // Visually show the copy is complete here */}
-              <Button.Prefix>{!ipsCopied ? <CopyIcon /> : <CheckmarkIcon />}</Button.Prefix>
+              <Button.Prefix>
+                {!ipsCopied ? <CopyIcon /> : <CheckmarkIcon />}
+              </Button.Prefix>
               Copy
             </Button>
           </FormField>
@@ -298,7 +307,12 @@ export const InstallOneagentModal = ({
         {/* Step 2 - Pick OneAgent mode */}
         <Flex flex={0} flexDirection="row">
           <FormField label="OS Type">
-            <Select name="mode" selectedId={osType} onChange={selectOsType} disabledKeys={[""]}>
+            <Select
+              name="mode"
+              selectedId={osType}
+              onChange={selectOsType}
+              disabledKeys={[""]}
+            >
               <SelectOption id="unix">Linux</SelectOption>
               <SelectOption id="windows">Windows</SelectOption>
               <SelectOption id="aix">AIX</SelectOption>
@@ -307,7 +321,12 @@ export const InstallOneagentModal = ({
             </Select>
           </FormField>
           <FormField label="OneAgent Mode">
-            <Select name="mode" selectedId={mode} onChange={setMode} disabledKeys={["discovery"]}>
+            <Select
+              name="mode"
+              selectedId={mode}
+              onChange={setMode}
+              disabledKeys={["discovery"]}
+            >
               <SelectOption id="discovery">Discovery</SelectOption>
               <SelectOption id="infrastructure">Infrastructure</SelectOption>
               <SelectOption id="fullstack">FullStack</SelectOption>
@@ -325,7 +344,9 @@ export const InstallOneagentModal = ({
                 setOptionsOpen((old) => !old);
               }}
             >
-              <Button.Prefix>{optionsOpen ? <UnfoldLessIcon /> : <UnfoldMoreIcon />}</Button.Prefix>
+              <Button.Prefix>
+                {optionsOpen ? <UnfoldLessIcon /> : <UnfoldMoreIcon />}
+              </Button.Prefix>
               Optional Parameters
             </Button>
           </Flex>
@@ -345,7 +366,12 @@ export const InstallOneagentModal = ({
                 </Select>
               </FormField>
               <FormField label="Architecture">
-                <Select name="mode" selectedId={arch} onChange={setArch} disabledKeys={disabledArchs}>
+                <Select
+                  name="mode"
+                  selectedId={arch}
+                  onChange={setArch}
+                  disabledKeys={disabledArchs}
+                >
                   <SelectOption id="all">Default</SelectOption>
                   <SelectOption id="x86">x86</SelectOption>
                   <SelectOption id="ppc">ppc</SelectOption>
@@ -384,11 +410,17 @@ export const InstallOneagentModal = ({
                 className="dlButton"
                 color={dl1linerCopied ? "success" : "neutral"}
               >
-                <Button.Prefix>{!dl1linerCopied ? <CopyIcon /> : <CheckmarkIcon />}</Button.Prefix>
+                <Button.Prefix>
+                  {!dl1linerCopied ? <CopyIcon /> : <CheckmarkIcon />}
+                </Button.Prefix>
                 Copy
               </Button>
               <Text>or</Text>
-              <Button disabled={downloading} onClick={downloadOneagent} className="copyButton">
+              <Button
+                disabled={downloading}
+                onClick={downloadOneagent}
+                className="copyButton"
+              >
                 <Flex flexDirection="row" alignContent="space-between">
                   <Button.Prefix>
                     <DownloadIcon />
@@ -422,7 +454,9 @@ export const InstallOneagentModal = ({
               className="copyButton"
               color={install1linerCopied ? "success" : "neutral"}
             >
-              <Button.Prefix>{!install1linerCopied ? <CopyIcon /> : <CheckmarkIcon />}</Button.Prefix>
+              <Button.Prefix>
+                {!install1linerCopied ? <CopyIcon /> : <CheckmarkIcon />}
+              </Button.Prefix>
               Copy
             </Button>
           </FormField>

@@ -1,26 +1,13 @@
-import { RecordV2Beta, RecordV2BetaValues } from "@dynatrace-sdk/client-query-v02";
 import { ResultRecord } from "@dynatrace-sdk/client-query";
-import { convertToColumnsFromWellFormedArray, TableColumn } from "@dynatrace/strato-components-preview";
 
-// interface UnmonitoredCloudValues extends RecordV2BetaValues {
-//   id: string;
-//   'entity.name': string;
-//   'entity.detected_name': string;
-//   ipAddress: string;
-// }
-
-// interface UnmonitoredCloud extends RecordV2Beta {
-//   values: UnmonitoredCloudValues | null;
-// }
-
-interface UnmonitoredCloud extends ResultRecord {
+export interface UnmonitoredCloud extends ResultRecord {
   id: string;
-  'entity.name': string;
-  'entity.detected_name': string;
+  "entity.name": string;
+  "entity.detected_name": string;
   ipAddress: string;
 }
 
-const UnmonitoredCloudCols = [
+export const UnmonitoredCloudCols = [
   {
     accessor: "id",
     header: "Entity ID",
@@ -28,9 +15,9 @@ const UnmonitoredCloudCols = [
   { accessor: "'entity.name'", header: "Entity Name" },
   { accessor: "'entity.detected_name'", header: "Detected Name" },
   { accessor: "ipAddress", header: "IP Address" },
-] as TableColumn[];
+] as const;
 
-interface Cloud {
+export interface Cloud {
   cloudType: "EC2" | "GOOGLE_CLOUD_PLATFORM" | "VMWare" | "AZURE";
   metricKey?: string;
   icon: string;
@@ -41,5 +28,3 @@ interface Cloud {
   unmonitoredCloud: UnmonitoredCloud[];
   setupPath: string;
 }
-
-export { Cloud, UnmonitoredCloud, UnmonitoredCloudCols };
