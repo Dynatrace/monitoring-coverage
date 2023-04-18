@@ -241,7 +241,7 @@ export const useRealCloudData = () => {
             if (nc && Array.isArray(res.result?.records)) {
               const num = res.result?.records[0]?.count as number;
               nc.cloudHosts = num;
-              if (num != null && !isNaN(num)) nc.cloudStatus = true;
+              if (num != null && !isNaN(num) && num > 0) nc.cloudStatus = true;
               else nc.cloudStatus = false;
             }
             return newClouds;
@@ -269,7 +269,7 @@ export const useRealCloudData = () => {
             if (nc && Array.isArray(res.result?.records)) {
               const num = res.result?.records[0]?.count as number;
               nc.cloudHosts = num;
-              if (num != null && !isNaN(num)) nc.cloudStatus = true;
+              if (num != null && !isNaN(num) && num > 0) nc.cloudStatus = true;
               else nc.cloudStatus = false;
             }
             return newClouds;
@@ -297,7 +297,7 @@ export const useRealCloudData = () => {
             if (nc && Array.isArray(res.result?.records)) {
               const num = res.result?.records[0]?.count as number;
               nc.cloudHosts = num;
-              if (num != null && !isNaN(num)) nc.cloudStatus = true;
+              if (num != null && !isNaN(num) && num > 0) nc.cloudStatus = true;
               else nc.cloudStatus = false;
             }
             return newClouds;
@@ -325,7 +325,7 @@ export const useRealCloudData = () => {
             if (nc && Array.isArray(res.result?.records)) {
               const num = res.result?.records[0]?.count as number;
               nc.cloudHosts = num;
-              if (num != null && !isNaN(num)) nc.cloudStatus = true;
+              if (num != null && !isNaN(num) && num > 0) nc.cloudStatus = true;
               else nc.cloudStatus = false;
             }
             return newClouds;
