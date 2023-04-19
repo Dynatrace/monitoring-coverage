@@ -7,24 +7,14 @@ export interface UnmonitoredCloud extends ResultRecord {
   ipAddress: string;
 }
 
-export const UnmonitoredCloudCols = [
-  {
-    accessor: "id",
-    header: "Entity ID",
-  },
-  { accessor: "'entity.name'", header: "Entity Name" },
-  { accessor: "'entity.detected_name'", header: "Detected Name" },
-  { accessor: "ipAddress", header: "IP Address" },
-] as const;
+export type CloudHostStatus = { hosts?: number, status?: boolean };
+
+export type CloudType = "EC2" | "GOOGLE_CLOUD_PLATFORM" | "VMWare" | "AZURE";
 
 export interface Cloud {
-  cloudType: "EC2" | "GOOGLE_CLOUD_PLATFORM" | "VMWare" | "AZURE";
+  cloudType: CloudType;
   metricKey?: string;
   icon: string;
   cloud: string;
-  cloudStatus: boolean;
-  cloudHosts: number;
-  oneagentHosts: number;
-  unmonitoredCloud: UnmonitoredCloud[];
   setupPath: string;
 }

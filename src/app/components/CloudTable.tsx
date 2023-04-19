@@ -1,80 +1,40 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import {
   DataTable,
   Flex,
   Button,
   TableColumn,
   Menu,
-  Text,
   TABLE_EXPANDABLE_DEFAULT_COLUMN,
 } from "@dynatrace/strato-components-preview";
 import {
-  SyncOffIcon,
-  SyncDoneIcon,
   SyncIcon,
   DotMenuIcon,
 } from "@dynatrace/strato-icons";
-import { Colors } from "@dynatrace/strato-design-tokens";
-import { ConnectCloudModal } from "./ConnectCloudModal";
-import { InstallOneagentModal } from "./InstallOneagentModal";
+import Spacings from '@dynatrace/strato-design-tokens/spacings';
+
+import { ConnectCloudModal } from "./modals/ConnectCloudModal";
+import { InstallOneAgentModal } from "./modals/InstallOneAgentModal";
 import { Cloud } from "../types/CloudTypes";
-import "./CloudTable.css";
-import { ConnectAWSModal } from "./ConnectAWSModal";
-import { ConnectAzureModal } from "./ConnectAzureModal";
+import { ConnectAWSModal } from "./modals/ConnectAWSModal";
+import { ConnectAzureModal } from "./modals/ConnectAzureModal";
 import { HostsTable } from "./HostsTable";
 import { OneAgentIcon } from "../icons/OneAgent";
+import { HostsCell } from "./cells/HostsCell";
+import { StatusCell } from "./cells/StatusCell";
+import { OneAgentCoverageCell } from "./cells/OneAgentCoverageCell";
+import { PriorityCell } from "./cells/PriorityCell";
+import { ActionsCell } from "./cells/ActionsCell";
+import { CLOUDS } from "../constants";
+import { useUnmonitoredHosts } from "../hooks/useUnmonitoredHosts";
 
-const criticalText = {
-  color: Colors.Text.Critical.Default,
-};
-
-const warningText = {
-  color: Colors.Text.Warning.Default,
-};
-const successText = {
-  color: Colors.Text.Success.Default,
-};
-
-const coverageRatio = (row) =>
-  row.original.cloudStatus
-    ? ((row.original.oneagentHosts || 0) / row.original.cloudHosts) * 100
-    : NaN;
-
-type CloudTableProps = {
-  data: Cloud[];
-  gen2Url: string;
-  fetchQueries: () => void;
-  setMockCloudData: React.Dispatch<React.SetStateAction<Cloud[]>>;
-  configToken: string | undefined;
-  getConfigToken: () => Promise<string>;
-};
-
-export const CloudTable = ({
-  data,
-  gen2Url,
-  fetchQueries,
-  setMockCloudData,
-  configToken,
-  getConfigToken,
-}: CloudTableProps) => {
+export const CloudTable = () => {
   const [cloudModalOpen, setCloudModalOpen] = useState(false);
   const [oneagentModalOpen, setOneagentModalOpen] = useState(false);
-  const [selectedCloud, setSelectedCloud] = useState<Cloud>();
-  const [ips, setIps] = useState<string>("");
-  useEffect(() => {
-    if (selectedCloud)
-      setIps(
-        selectedCloud?.unmonitoredCloud?.map((sc) => sc.ipAddress).join(", ")
-      );
-    else setIps("");
-  }, [selectedCloud]);
+  const [selectedCloud, setSelectedCloud] = useState<Cloud>(CLOUDS[0]);
 
-  useEffect(() => {
-    if (!cloudModalOpen)
-      setTimeout(() => {
-        fetchQueries();
-      }, 10000);
-  }, [cloudModalOpen]);
+  const { data: unmonitoredHosts } = useUnmonitoredHosts(selectedCloud?.cloudType);
+  const ips = unmonitoredHosts ? unmonitoredHosts.map((host) => host.ipAddress).join(', ') : '';
 
   const columns = useMemo<TableColumn[]>(
     () => [
@@ -82,56 +42,32 @@ export const CloudTable = ({
         ...TABLE_EXPANDABLE_DEFAULT_COLUMN,
       },
       {
-        accessor: "cloud",
         header: "Cloud provider",
         width: 170,
         cell: ({ row }) => {
           return (
-            <span>
+            <Flex>
               <img
                 src={`./assets/${row.original.icon}`}
-                className="iconStyle"
+                style={{ height: Spacings.Size20, width: Spacings.Size20 }}
               />
               <span>{row.original.cloud}</span>
-            </span>
+            </Flex>
           );
         },
       },
       {
-        accessor: "cloudStatus",
         header: "Cloud status",
         width: 100,
         cell: ({ row }) => {
-          if (row.original.cloudStatus)
-            return (
-              <Text className="iconStyle">
-                <SyncDoneIcon />
-                Connected
-              </Text>
-            );
-          else if (row.original.oneagentHosts > 0)
-            return (
-              <Text style={criticalText} className="iconStyle">
-                <SyncOffIcon />
-                Not setup
-              </Text>
-            );
-          else
-            return (
-              <Text className="iconStyle">
-                <SyncOffIcon />
-                Not setup
-              </Text>
-            );
-        },
+          return <StatusCell type={row.original.cloudType} />
+        }
       },
       {
-        accessor: "cloudHosts",
         header: "Cloud hosts",
         width: 100,
-        cell: ({ value }) => {
-          if (value != null && !isNaN(value)) return <span>{value}</span>;
-          else return <span>-</span>;
+        cell: ({ row }) => {
+          return <HostsCell type={row.original.cloudType} />;
         },
       },
       {
@@ -139,78 +75,31 @@ export const CloudTable = ({
         header: "OneAgent hosts",
         width: 100,
         cell: ({ value }) => {
-          if (value != null && !isNaN(value)) return <span>{value}</span>;
-          else {
-            return <span>-</span>;
-          }
+          return value !== null && !isNaN(value) ? value : "-";
         },
       },
       {
         header: "OneAgent coverage",
         width: 120,
         cell: ({ row }) => {
-          const coverage = coverageRatio(row);
-          if (coverage > 100)
-            return <span style={criticalText}>&gt; 100%</span>;
-          if (coverage == 100) return <span style={successText}>100%</span>;
-          if (!isNaN(coverage) && coverage < 90)
-            return <span style={warningText}>{coverage.toFixed(0)}%</span>;
-          if (!isNaN(coverage)) return <span>{coverage.toFixed(0)}%</span>;
-          return <span>-</span>;
+          return <OneAgentCoverageCell type={row.original.cloudType} />
         },
       },
       {
         header: "Priority",
         width: 100,
         cell: ({ row }) => {
-          const coverage = coverageRatio(row);
-          if (!row.original.cloudStatus && row.original.oneagentHosts > 0)
-            return <Text style={criticalText}>Critical</Text>;
-          if (coverage > 100) return <Text style={criticalText}>Critical</Text>;
-          if (coverage == 100) return "-";
-          if (coverage >= 90) return "Low";
-          if (coverage > 70) return "Medium";
-          if (coverage >= 0) return <Text style={warningText}>High</Text>;
-          return "-";
+          return <PriorityCell type={row.original.cloudType} />
         },
       },
       {
         header: "Actions",
         width: 170,
         cell: ({ row }) => {
-          if (!row.original.cloudStatus || coverageRatio(row) > 100)
-            return (
-              <Button
-                width="full"
-                variant="accent"
-                onClick={() => {
-                  setSelectedCloud(row.original);
-                  setCloudModalOpen(true);
-                }}
-              >
-                <Button.Prefix>
-                  <SyncIcon />
-                </Button.Prefix>
-                Connect cloud
-              </Button>
-            );
-          if (coverageRatio(row) < 100)
-            return (
-              <Button
-                width="full"
-                variant="emphasized"
-                onClick={() => {
-                  setSelectedCloud(row.original);
-                  setOneagentModalOpen(true);
-                }}
-              >
-                <Button.Prefix>
-                  <OneAgentIcon />
-                </Button.Prefix>
-                Install OneAgents
-              </Button>
-            );
-          return <Flex>-</Flex>;
+          return <ActionsCell type={row.original.cloudType} onClick={() => {
+            setSelectedCloud(row.original);
+            setOneagentModalOpen(true);
+          }} />
         },
       },
       {
@@ -221,7 +110,7 @@ export const CloudTable = ({
           return (
             <Menu>
               <Menu.Trigger>
-                <Button variant="default">
+                <Button aria-label="Open options menu.">
                   <Button.Prefix>
                     <DotMenuIcon />
                   </Button.Prefix>
@@ -246,7 +135,7 @@ export const CloudTable = ({
                   }}
                 >
                   <Menu.ItemIcon>
-                    <img src="./assets/oneagent.svg" className="iconStyle" />
+                    <OneAgentIcon />
                   </Menu.ItemIcon>
                   Install OneAgents
                 </Menu.Item>
@@ -256,14 +145,14 @@ export const CloudTable = ({
         },
       },
     ],
-    []
+    [open]
   );
 
   return (
-    <div className="cloudTable">
+    <>
       <DataTable
         columns={columns}
-        data={data}
+        data={CLOUDS}
         variant={{
           contained: true,
           rowSeparation: "horizontalDividers",
@@ -273,29 +162,12 @@ export const CloudTable = ({
       >
         <DataTable.ExpandableRow>
           {({ row }) => {
-            if (
-              Array.isArray(row.unmonitoredCloud) &&
-              row.unmonitoredCloud.length > 0
-            ) {
-              return (
-                <HostsTable
-                  unmonitoredCloud={row.unmonitoredCloud}
-                  setIps={setIps}
-                  setOneagentModalOpen={setOneagentModalOpen}
-                />
-              );
-            } else
-              return (
-                <Flex flexDirection="column">
-                  <Text>
-                    No unmonitored hosts detected. Connect additional clouds.
-                  </Text>
-                </Flex>
-              );
+            console.log(row);
+            return <HostsTable type={row.cloudType}/>
           }}
         </DataTable.ExpandableRow>
       </DataTable>
-      {cloudModalOpen && (
+      {cloudModalOpen && selectedCloud && (
         <>
           <ConnectCloudModal
             modalOpen={
@@ -305,36 +177,26 @@ export const CloudTable = ({
             }
             setModalOpen={setCloudModalOpen}
             selectedCloud={selectedCloud}
-            gen2Url={gen2Url}
           />
           <ConnectAWSModal
-            modalOpen={cloudModalOpen && selectedCloud?.cloudType == "EC2"}
+            modalOpen={cloudModalOpen && selectedCloud?.cloudType === "EC2"}
             setModalOpen={setCloudModalOpen}
             selectedCloud={selectedCloud}
-            gen2Url={gen2Url}
-
-            configToken={configToken}
-            getConfigToken={getConfigToken}
           />
           <ConnectAzureModal
             modalOpen={cloudModalOpen && selectedCloud?.cloudType == "AZURE"}
             setModalOpen={setCloudModalOpen}
             selectedCloud={selectedCloud}
-            gen2Url={gen2Url}
-            configToken={configToken}
-            getConfigToken={getConfigToken}
           />
         </>
       )}
-      {oneagentModalOpen && (
-        <InstallOneagentModal
+      {oneagentModalOpen && selectedCloud && (
+        <InstallOneAgentModal
           modalOpen={oneagentModalOpen}
           setModalOpen={setOneagentModalOpen}
-          selectedCloud={selectedCloud}
-          gen2Url={gen2Url}
           ips={ips}
         />
       )}
-    </div>
+    </>
   );
 };

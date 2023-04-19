@@ -1,81 +1,81 @@
-import React, { useMemo, Dispatch } from "react";
-import { getIntentLink } from "@dynatrace-sdk/navigation";
-import { DataTable, convertToColumns, Link, QueryColumn, Menu, Button, convertToColumnsFromWellFormedArray } from "@dynatrace/strato-components-preview";
-import { OpenWithIcon, DotMenuIcon } from "@dynatrace/strato-icons";
-import { UnmonitoredCloud, UnmonitoredCloudCols } from "../types/CloudTypes";
+import React, { useMemo, useState } from 'react';
+import { DataTable, Menu, Button, IntentButton, LoadingIndicator, Text } from '@dynatrace/strato-components-preview';
+import { DotMenuIcon } from '@dynatrace/strato-icons';
+import { CloudType } from '../types/CloudTypes';
+import { OneAgentIcon } from '../icons/OneAgent';
+import { useUnmonitoredHosts } from '../hooks/useUnmonitoredHosts';
+import { Indicator } from './Indicator';
+import { InstallOneAgentModal } from './modals/InstallOneAgentModal';
 
-export const HostsTable = ({
-  unmonitoredCloud,
-  setOneagentModalOpen,
-  setIps,
-}: {
-  unmonitoredCloud: UnmonitoredCloud[];
-  setOneagentModalOpen: Dispatch<React.SetStateAction<boolean>>;
-  setIps: Dispatch<React.SetStateAction<string>>;
-}) => {
-  const columns = useMemo(() => {
-    // const cols = convertToColumns(unmonitoredCloud);
-    const cols = [...UnmonitoredCloudCols];
-    const entCol = cols.find((c) => (c.id = "id"));
-    // debugger;
-    if (entCol) {
-      entCol.cell = ({ row }) => {
-        const intentLink = getIntentLink({ "dt.entity.host": row.original.id });
-        return (
-          <Link href={intentLink} target="_blank">
-            {row.original.id} <OpenWithIcon />
-          </Link>
-        );
-      };
-      // entCol.ratioWidth = 1.5;
-      // entCol.width = 500;
-    }
-    cols
-      .filter((c) => c != entCol)
-      .forEach((c) => {
-        // c.ratioWidth = 1;
-        // c.width = 220;
-      });
-    cols.push({
-      header: " ",
-      // width: 50,
-      autoWidth: true,
+type HostTableProps = { type: CloudType };
 
-      cell: ({ row }) => {
-        return (
-          <Menu>
-            <Menu.Trigger>
-              <Button style={{ padding: 0, margin: 0 }} variant="default">
-                <Button.Prefix>
-                  <DotMenuIcon />
-                </Button.Prefix>
-              </Button>
-            </Menu.Trigger>
-            <Menu.Content>
-              <Menu.Item
-                onSelect={() => {
-                  setIps(row.original.ipAddress);
-                  setOneagentModalOpen(true);
-                }}
-              >
-                <Menu.ItemIcon>
-                  <img src="./assets/oneagent.svg" className="iconStyle" />
-                </Menu.ItemIcon>
-                Install OneAgent
-              </Menu.Item>
-            </Menu.Content>
-          </Menu>
-        );
+export const HostsTable = ({ type }: HostTableProps) => {
+  const { isLoading, isError, data } = useUnmonitoredHosts(type);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [ips, setIps] = useState('');
+
+  const columns = useMemo(
+    () => [
+      {
+        accessor: 'id',
+        header: 'Entity ID',
+        cell: ({ row }) => {
+          return <IntentButton payload={{ 'dt.entity.host': row.original.id }}>{row.original.id}</IntentButton>;
+        },
       },
-    } as QueryColumn);
+      { accessor: "'entity.name'", header: 'Entity Name' },
+      { accessor: "'entity.detected_name'", header: 'Detected Name' },
+      { accessor: 'ipAddress', header: 'IP Address' },
+      {
+        header: ' ',
+        autoWidth: true,
+        cell: ({ row }) => {
+          return (
+            <Menu>
+              <Menu.Trigger>
+                <Button aria-label='Open options menu.'>
+                  <Button.Prefix>
+                    <DotMenuIcon />
+                  </Button.Prefix>
+                </Button>
+              </Menu.Trigger>
+              <Menu.Content>
+                <Menu.Item
+                  onSelect={() => {
+                    setIps(row.original.ipAddress);
+                    setModalOpen(true);
+                  }}
+                >
+                  <Menu.ItemIcon>
+                    <OneAgentIcon />
+                  </Menu.ItemIcon>
+                  Install OneAgent
+                </Menu.Item>
+              </Menu.Content>
+            </Menu>
+          );
+        },
+      },
+    ],
+    [],
+  );
 
-    return cols;
-  }, [unmonitoredCloud]);
-  return (
-    <div className="hostTable">
-      <DataTable data={unmonitoredCloud} columns={columns} resizable>
+  if (isLoading) {
+    return <LoadingIndicator />;
+  }
+
+  if (isError) {
+    return <Indicator state='critical'>There was an error fetching unmonitored hosts</Indicator>;
+  }
+
+  return data.length > 0 ? (
+    <>
+      <DataTable data={data} columns={columns} resizable>
         <DataTable.Pagination />
       </DataTable>
-    </div>
+      <InstallOneAgentModal modalOpen={modalOpen} setModalOpen={setModalOpen} ips={ips} />
+    </>
+  ) : (
+    <Text>No unmonitored hosts detected. Connect additional clouds.</Text>
   );
 };
