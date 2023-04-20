@@ -32,7 +32,7 @@
     "node": ">=16.13.0"
   },
   "author": "",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
     "@dynatrace-sdk/client-classic-environment-v1": "1.0.1",
     "@dynatrace-sdk/client-classic-environment-v2": "1.0.3",
