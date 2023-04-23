@@ -28,7 +28,6 @@ async function getToken(config: ApiTokenCreate) {
   if (tokens.has(config)) {
     return tokens.get(config) as string;
   }
-  debugger;
   const res = await accessTokensApiTokensClient.createApiToken({ body: config });
   if (res.token === undefined) {
     throw new Error('Token missing.');

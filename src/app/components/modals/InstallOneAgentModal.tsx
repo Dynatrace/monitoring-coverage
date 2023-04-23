@@ -116,14 +116,6 @@ export const InstallOneAgentModal = ({ modalOpen, setModalOpen, ips, cloudType }
   };
 
   const installOneAgentHosts = () => {
-    /*setMockCloudData((oldData) => {
-      if (selectedCloud) {
-        selectedCloud.oneagentHosts = selectedCloud.cloudHosts;
-        selectedCloud.unmonitoredCloud = [] as UnmonitoredCloud[];
-      }
-      return [...oldData];
-    });*/
-    debugger;
     if (demoMode) {
       updateMockHosts(queryClient,cloudType);
     } else {

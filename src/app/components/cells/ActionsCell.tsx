@@ -65,6 +65,5 @@ export const ActionsCell = ({ cloud, setSelectedCloud, setOneagentModalOpen, set
       </Button>
     );
   }
-  debugger;
   return <>-</>;
 };
