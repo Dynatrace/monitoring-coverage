@@ -1,5 +1,5 @@
 import React from 'react';
-import { CloudType } from 'src/app/types/CloudTypes';
+import { Cloud } from 'src/app/types/CloudTypes';
 import { coverageRatio } from './coverage-ratio';
 import { useHostsStatus } from 'src/app/hooks/useHostsStatus';
 import { useOneAgentHosts } from 'src/app/hooks/useOneAgentHosts';
@@ -8,12 +8,18 @@ import { Button } from '@dynatrace/strato-components-preview';
 import { OneAgentIcon } from 'src/app/icons/OneAgent';
 
 type ActionsCellProps = {
-  type: CloudType;
-  onClick: () => void;
+  cloud: Cloud;
+  setSelectedCloud: React.Dispatch<React.SetStateAction<Cloud>>;
+  setOneagentModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setCloudModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const ActionsCell = ({ type, onClick }: ActionsCellProps) => {
-  const status = useHostsStatus(type);
+const BUTTON_TEXT_STYLE = {
+  minWidth: 120,
+};
+
+export const ActionsCell = ({ cloud, setSelectedCloud, setOneagentModalOpen, setCloudModalOpen }: ActionsCellProps) => {
+  const status = useHostsStatus(cloud.cloudType);
   const oneagent = useOneAgentHosts();
 
   const isLoading = status.isLoading || oneagent.isLoading;
@@ -23,25 +29,39 @@ export const ActionsCell = ({ type, onClick }: ActionsCellProps) => {
 
   if (isError) return <ErrorIcon />;
 
-  const coverage = coverageRatio(status.data, oneagent.data[type]);
+  const coverage = coverageRatio(status.data, oneagent.data[cloud.cloudType]);
 
   if (status.data.status && coverage > 100) {
     return (
-      <Button width='full' variant='accent' onClick={onClick}>
+      <Button
+        width='full'
+        variant='accent'
+        onClick={() => {
+          setSelectedCloud(cloud);
+          setCloudModalOpen(true);
+        }}
+      >
         <Button.Prefix>
           <SyncIcon />
         </Button.Prefix>
-        Connect cloud
+        <div style={BUTTON_TEXT_STYLE}>Connect cloud</div>
       </Button>
     );
   }
   if (coverage < 100) {
     return (
-      <Button width='full' variant='emphasized' onClick={onClick}>
+      <Button
+        width='full'
+        variant='emphasized'
+        onClick={() => {
+          setSelectedCloud(cloud);
+          setOneagentModalOpen(true);
+        }}
+      >
         <Button.Prefix>
           <OneAgentIcon />
         </Button.Prefix>
-        Install OneAgents
+        <div style={BUTTON_TEXT_STYLE}>Install OneAgents</div>
       </Button>
     );
   }

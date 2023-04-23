@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo } from 'react';
 import {
   DataTable,
   Flex,
@@ -6,27 +6,24 @@ import {
   TableColumn,
   Menu,
   TABLE_EXPANDABLE_DEFAULT_COLUMN,
-} from "@dynatrace/strato-components-preview";
-import {
-  SyncIcon,
-  DotMenuIcon,
-} from "@dynatrace/strato-icons";
+} from '@dynatrace/strato-components-preview';
+import { SyncIcon, DotMenuIcon } from '@dynatrace/strato-icons';
 import Spacings from '@dynatrace/strato-design-tokens/spacings';
 
-import { ConnectCloudModal } from "./modals/ConnectCloudModal";
-import { InstallOneAgentModal } from "./modals/InstallOneAgentModal";
-import { Cloud } from "../types/CloudTypes";
-import { ConnectAWSModal } from "./modals/ConnectAWSModal";
-import { ConnectAzureModal } from "./modals/ConnectAzureModal";
-import { HostsTable } from "./HostsTable";
-import { OneAgentIcon } from "../icons/OneAgent";
-import { HostsCell } from "./cells/HostsCell";
-import { StatusCell } from "./cells/StatusCell";
-import { OneAgentCoverageCell } from "./cells/OneAgentCoverageCell";
-import { PriorityCell } from "./cells/PriorityCell";
-import { ActionsCell } from "./cells/ActionsCell";
-import { CLOUDS } from "../constants";
-import { useUnmonitoredHosts } from "../hooks/useUnmonitoredHosts";
+import { ConnectCloudModal } from './modals/ConnectCloudModal';
+import { InstallOneAgentModal } from './modals/InstallOneAgentModal';
+import { Cloud } from '../types/CloudTypes';
+import { ConnectAWSModal } from './modals/ConnectAWSModal';
+import { ConnectAzureModal } from './modals/ConnectAzureModal';
+import { HostsTable } from './HostsTable';
+import { OneAgentIcon } from '../icons/OneAgent';
+import { HostsCell } from './cells/HostsCell';
+import { StatusCell } from './cells/StatusCell';
+import { OneAgentCoverageCell } from './cells/OneAgentCoverageCell';
+import { PriorityCell } from './cells/PriorityCell';
+import { ActionsCell } from './cells/ActionsCell';
+import { CLOUDS } from '../constants';
+import { useUnmonitoredHosts } from '../hooks/useUnmonitoredHosts';
 
 export const CloudTable = () => {
   const [cloudModalOpen, setCloudModalOpen] = useState(false);
@@ -42,75 +39,82 @@ export const CloudTable = () => {
         ...TABLE_EXPANDABLE_DEFAULT_COLUMN,
       },
       {
-        header: "Cloud provider",
+        header: 'Cloud provider',
         width: 170,
         cell: ({ row }) => {
           return (
             <Flex>
-              <img
-                src={`./assets/${row.original.icon}`}
-                style={{ height: Spacings.Size20, width: Spacings.Size20 }}
-              />
+              <img src={`./assets/${row.original.icon}`} style={{ height: Spacings.Size20, width: Spacings.Size20 }} />
               <span>{row.original.cloud}</span>
             </Flex>
           );
         },
       },
       {
-        header: "Cloud status",
+        header: 'Cloud status',
         width: 100,
         cell: ({ row }) => {
-          return <StatusCell type={row.original.cloudType} />
-        }
+          return <StatusCell type={row.original.cloudType} />;
+        },
       },
       {
-        header: "Cloud hosts",
+        header: 'Cloud hosts',
         width: 100,
+        alignment: "right",
         cell: ({ row }) => {
           return <HostsCell type={row.original.cloudType} />;
         },
       },
       {
-        accessor: "oneagentHosts",
-        header: "OneAgent hosts",
+        accessor: 'oneagentHosts',
+        header: 'OneAgent hosts',
+        alignment: "right",
         width: 100,
         cell: ({ value }) => {
-          return value !== null && !isNaN(value) ? value : "-";
+          return value !== null && !isNaN(value) ? value : '-';
         },
       },
       {
-        header: "OneAgent coverage",
+        header: 'OneAgent coverage',
+        alignment: "right",
         width: 120,
         cell: ({ row }) => {
-          return <OneAgentCoverageCell type={row.original.cloudType} />
+          return <OneAgentCoverageCell type={row.original.cloudType} />;
         },
       },
       {
-        header: "Priority",
+        header: 'Priority',
         width: 100,
         cell: ({ row }) => {
-          return <PriorityCell type={row.original.cloudType} />
+          return <PriorityCell type={row.original.cloudType} />;
         },
       },
       {
-        header: "Actions",
+        header: 'Actions',
         width: 170,
+        alignment: "center",
         cell: ({ row }) => {
-          return <ActionsCell type={row.original.cloudType} onClick={() => {
-            setSelectedCloud(row.original);
-            setOneagentModalOpen(true);
-          }} />
+          return (
+            <Flex minWidth={180}>
+              <ActionsCell
+                cloud={row.original}
+                setSelectedCloud={setSelectedCloud}
+                setOneagentModalOpen={setOneagentModalOpen}
+                setCloudModalOpen={setCloudModalOpen}
+              />
+            </Flex>
+          );
         },
       },
       {
-        header: " ",
-        alignment: "center",
+        header: ' ',
+        alignment: 'center',
         width: 40,
         cell: ({ row }) => {
           return (
             <Menu>
               <Menu.Trigger>
-                <Button aria-label="Open options menu.">
+                <Button aria-label='Open options menu.'>
                   <Button.Prefix>
                     <DotMenuIcon />
                   </Button.Prefix>
@@ -145,7 +149,7 @@ export const CloudTable = () => {
         },
       },
     ],
-    [open]
+    [open],
   );
 
   return (
@@ -155,7 +159,7 @@ export const CloudTable = () => {
         data={CLOUDS}
         variant={{
           contained: true,
-          rowSeparation: "horizontalDividers",
+          rowSeparation: 'horizontalDividers',
           verticalDividers: true,
         }}
         resizable={true}
@@ -163,39 +167,31 @@ export const CloudTable = () => {
         <DataTable.ExpandableRow>
           {({ row }) => {
             console.log(row);
-            return <HostsTable type={row.cloudType}/>
+            return <HostsTable type={row.cloudType} />;
           }}
         </DataTable.ExpandableRow>
       </DataTable>
       {cloudModalOpen && selectedCloud && (
         <>
           <ConnectCloudModal
-            modalOpen={
-              cloudModalOpen &&
-              selectedCloud?.cloudType != "EC2" &&
-              selectedCloud?.cloudType != "AZURE"
-            }
+            modalOpen={cloudModalOpen && selectedCloud?.cloudType != 'EC2' && selectedCloud?.cloudType != 'AZURE'}
             setModalOpen={setCloudModalOpen}
             selectedCloud={selectedCloud}
           />
           <ConnectAWSModal
-            modalOpen={cloudModalOpen && selectedCloud?.cloudType === "EC2"}
+            modalOpen={cloudModalOpen && selectedCloud?.cloudType === 'EC2'}
             setModalOpen={setCloudModalOpen}
             selectedCloud={selectedCloud}
           />
           <ConnectAzureModal
-            modalOpen={cloudModalOpen && selectedCloud?.cloudType == "AZURE"}
+            modalOpen={cloudModalOpen && selectedCloud?.cloudType == 'AZURE'}
             setModalOpen={setCloudModalOpen}
             selectedCloud={selectedCloud}
           />
         </>
       )}
       {oneagentModalOpen && selectedCloud && (
-        <InstallOneAgentModal
-          modalOpen={oneagentModalOpen}
-          setModalOpen={setOneagentModalOpen}
-          ips={ips}
-        />
+        <InstallOneAgentModal modalOpen={oneagentModalOpen} setModalOpen={setOneagentModalOpen} ips={ips} />
       )}
     </>
   );
