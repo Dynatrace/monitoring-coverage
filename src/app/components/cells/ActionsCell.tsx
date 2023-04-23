@@ -31,7 +31,7 @@ export const ActionsCell = ({ cloud, setSelectedCloud, setOneagentModalOpen, set
 
   const coverage = coverageRatio(status.data, oneagent.data[cloud.cloudType]);
 
-  if (status.data.status && coverage > 100) {
+  if (!status.data.status || coverage > 100) {
     return (
       <Button
         width='full'
@@ -65,5 +65,6 @@ export const ActionsCell = ({ cloud, setSelectedCloud, setOneagentModalOpen, set
       </Button>
     );
   }
+  debugger;
   return <>-</>;
 };
