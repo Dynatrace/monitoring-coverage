@@ -37,6 +37,7 @@ export const ConnectAWSModal = ({
       const formData = new FormData(formRef.current);
       mutate(formData);
     }
+    setModalOpen(false);
   }
 
   return (

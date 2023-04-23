@@ -152,7 +152,7 @@ export const CloudTable = () => {
         },
       },
     ],
-    [open],
+    [open], //<- @Fabian, what is this??
   );
 
   return (

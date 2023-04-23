@@ -28,11 +28,14 @@ export const ConnectAzureModal = ({
   const { mutate } = useAzureCredentials();
 
   function submit(ev: FormEvent<HTMLFormElement>) {
+    //@Fabian, why replace onClick button handles with actual form, if we're preventing form submission
+    //I'm wondering if this is maybe the source of a few occasional error messages...
     ev.preventDefault();
     if (formRef.current) {
       const formData = new FormData(formRef.current);
       mutate(formData);
     }
+    setModalOpen(false);
   }
 
   return (

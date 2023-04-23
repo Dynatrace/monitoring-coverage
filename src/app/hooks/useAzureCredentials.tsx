@@ -5,6 +5,7 @@ import { useDemoMode } from './useDemoMode';
 import { Meta } from '../types/Meta';
 import { updateMockData } from '../components/demo/update-mock-data';
 import { functions } from '@dynatrace/util-app';
+import { showToast } from '@dynatrace/strato-components-preview';
 
 async function noop() {
   return Promise.resolve() as unknown as Promise<Response>;
@@ -49,8 +50,15 @@ export function useAzureCredentials() {
     mutationKey: [{ demoMode }],
     meta,
     onSuccess: () => {
+      // console.log("useAzureCredentials.useMutation",{demoMode});
       if (demoMode) {
         updateMockData(queryClient, 'AZURE');
+        showToast({
+          title: "(mock) Cloud connection created",
+          type: "info",
+          message: `Successfully created connection to ${/*selectedCloud?.cloud*/'AZURE'}`,
+          lifespan: 4000,
+        });
       } else {
         // trigger a refetch for host status after mutation was successful by invalidating the query
         queryClient.invalidateQueries({ queryKey: ['host-status'] });
