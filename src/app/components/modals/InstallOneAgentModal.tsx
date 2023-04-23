@@ -27,7 +27,7 @@ import { useDownloadOneAgent } from '../../hooks/useDownloadOneAgent';
 import { useInstallerDownloadToken } from '../../hooks/useInstallerDownloadToken';
 import { CopyButton } from '../CopyButton';
 import { OneAgentIcon } from '../../icons/OneAgent';
-import { QueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { CloudType } from 'src/app/types/CloudTypes';
 import { updateMockHosts } from '../demo/update-mock-hosts';
 
@@ -42,7 +42,7 @@ type InstallOneagentModalProps = {
 
 export const InstallOneAgentModal = ({ modalOpen, setModalOpen, ips, cloudType }: InstallOneagentModalProps) => {
   const demoMode = useDemoMode();
-  const queryClient = new QueryClient();
+  const queryClient = useQueryClient();
 
   //visual states
   const [optionsOpen, setOptionsOpen] = useState(false);
