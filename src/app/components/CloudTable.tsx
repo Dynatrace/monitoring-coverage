@@ -24,6 +24,7 @@ import { PriorityCell } from './cells/PriorityCell';
 import { ActionsCell } from './cells/ActionsCell';
 import { CLOUDS } from '../constants';
 import { useUnmonitoredHosts } from '../hooks/useUnmonitoredHosts';
+import { OneAgentHostsCell } from './cells/OneAgentHostsCell';
 
 export const CloudTable = () => {
   const [cloudModalOpen, setCloudModalOpen] = useState(false);
@@ -70,8 +71,10 @@ export const CloudTable = () => {
         header: 'OneAgent hosts',
         alignment: "right",
         width: 100,
-        cell: ({ value }) => {
-          return value !== null && !isNaN(value) ? value : '-';
+        cell: ({ row }) => {
+          // console.log("oneagentHosts:",value,row.original)
+          // return value !== null && !isNaN(value) ? value : '-';
+          return <OneAgentHostsCell type={row.original.cloudType} />;
         },
       },
       {
