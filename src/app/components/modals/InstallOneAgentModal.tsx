@@ -27,6 +27,9 @@ import { useDownloadOneAgent } from '../../hooks/useDownloadOneAgent';
 import { useInstallerDownloadToken } from '../../hooks/useInstallerDownloadToken';
 import { CopyButton } from '../CopyButton';
 import { OneAgentIcon } from '../../icons/OneAgent';
+import { QueryClient } from '@tanstack/react-query';
+import { CloudType } from 'src/app/types/CloudTypes';
+import { updateMockHosts } from '../demo/update-mock-hosts';
 
 const TEXTCOLS = 120;
 
@@ -34,10 +37,12 @@ type InstallOneagentModalProps = {
   modalOpen: boolean;
   setModalOpen;
   ips: string;
+  cloudType: CloudType;
 };
 
-export const InstallOneAgentModal = ({ modalOpen, setModalOpen, ips }: InstallOneagentModalProps) => {
+export const InstallOneAgentModal = ({ modalOpen, setModalOpen, ips, cloudType }: InstallOneagentModalProps) => {
   const demoMode = useDemoMode();
+  const queryClient = new QueryClient();
 
   //visual states
   const [optionsOpen, setOptionsOpen] = useState(false);
@@ -107,6 +112,22 @@ export const InstallOneAgentModal = ({ modalOpen, setModalOpen, ips }: InstallOn
         setDisabledInstallerTypes(['paas-sh']);
         setInstallerType(['default']);
         break;
+    }
+  };
+
+  const installOneAgentHosts = () => {
+    /*setMockCloudData((oldData) => {
+      if (selectedCloud) {
+        selectedCloud.oneagentHosts = selectedCloud.cloudHosts;
+        selectedCloud.unmonitoredCloud = [] as UnmonitoredCloud[];
+      }
+      return [...oldData];
+    });*/
+    debugger;
+    if (demoMode) {
+      updateMockHosts(queryClient,cloudType);
+    } else {
+      queryClient.invalidateQueries({ queryKey: ['one-agent-host', { demoMode }] });
     }
   };
 
@@ -237,7 +258,7 @@ export const InstallOneAgentModal = ({ modalOpen, setModalOpen, ips }: InstallOn
                 {isInstallerMetaError ? (
                   <Hint hasError={isInstallerMetaError}>There was an error obtaining the agent information.</Hint>
                 ) : null}
-                <CopyButton contentToCopy={install1Liner} />
+                <CopyButton contentToCopy={install1Liner} onCopy={installOneAgentHosts} />
               </FormField>
             </>
           )}

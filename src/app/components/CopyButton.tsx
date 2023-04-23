@@ -4,9 +4,10 @@ import React, { useState } from "react"
 
 type CopyButtonProps = {
   contentToCopy: string;
+  onCopy?: ()=>void;
 }
 
-export const CopyButton = ({ contentToCopy }: CopyButtonProps) => {
+export const CopyButton = ({ contentToCopy, onCopy }: CopyButtonProps) => {
   const [copied, setCopied] = useState<boolean>();
 
   return <Button
@@ -14,7 +15,8 @@ export const CopyButton = ({ contentToCopy }: CopyButtonProps) => {
     onClick={() => {
       navigator.clipboard.writeText(contentToCopy);
       setCopied(true);
-      showToast({ title: 'Copied to clipboard', type: 'info', lifespan: 2000 })
+      showToast({ title: 'Copied to clipboard', type: 'info', lifespan: 2000 });
+      if(onCopy) onCopy();
     }}
     className='copyButton'
     color={copied ? 'success' : 'neutral'}

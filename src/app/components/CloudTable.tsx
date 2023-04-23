@@ -194,7 +194,7 @@ export const CloudTable = () => {
         </>
       )}
       {oneagentModalOpen && selectedCloud && (
-        <InstallOneAgentModal modalOpen={oneagentModalOpen} setModalOpen={setOneagentModalOpen} ips={ips} />
+        <InstallOneAgentModal modalOpen={oneagentModalOpen} setModalOpen={setOneagentModalOpen} ips={ips} cloudType={selectedCloud.cloudType}/>
       )}
     </>
   );

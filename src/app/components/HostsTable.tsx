@@ -73,7 +73,7 @@ export const HostsTable = ({ type }: HostTableProps) => {
       <DataTable data={data} columns={columns} resizable>
         <DataTable.Pagination />
       </DataTable>
-      <InstallOneAgentModal modalOpen={modalOpen} setModalOpen={setModalOpen} ips={ips} />
+      <InstallOneAgentModal modalOpen={modalOpen} setModalOpen={setModalOpen} ips={ips} cloudType={type}/>
     </>
   ) : (
     <Text>No unmonitored hosts detected. Connect additional clouds.</Text>
