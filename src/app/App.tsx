@@ -37,16 +37,16 @@ export const App = () => {
 
         <Flex
           flexDirection="column"
-          alignItems="center"
           width="100%"
           gap={24}
+          style={{ overflowX: 'auto' }}
         >
           {demoMode && <AppIntro />}
-          <Flex flexDirection="column" width={1280}>
+          <div style={{ display: 'block', marginLeft: 'auto', marginRight: 'auto',  width: 1280 }} >
             <DemoModeProvider demoMode={demoMode}>
               <CloudTable />
             </DemoModeProvider>
-          </Flex>
+          </div>
           {demoMode && <WhatsNext />}
         </Flex>
       </Page.Main>

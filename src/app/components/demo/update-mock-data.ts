@@ -12,17 +12,7 @@ export function updateMockData(queryClient: QueryClient, cloudType: CloudType) {
   };
   const unmonitoredHosts = generateHostData(hostStatus.hosts - demoHosts, 'NEWCLOUDHOST', 'newcloud');
 
-  // const hostQueryStatus = queryClient.getQueryState(['host-status', cloudType, { demoMode: true }]);
-  // const unmonitoredQueryStatus = queryClient.getQueryState(['unmonitored-hosts', cloudType]);
-  // console.log('update-mock-data:', {
-  //   oneagentHosts,
-  //   demoHosts,
-  //   hostStatus,
-  //   unmonitoredHosts,
-  //   cloudType,
-  //   hostQueryStatus,
-  //   unmonitoredQueryStatus,
-  // });
   queryClient.setQueryData<CloudHostStatus>(['hosts-status', cloudType, { demoMode: true }], hostStatus);
   queryClient.setQueryData<UnmonitoredCloud[]>(['unmonitored-hosts', cloudType], unmonitoredHosts);
+  return unmonitoredHosts;
 }

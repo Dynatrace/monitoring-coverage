@@ -1,9 +1,8 @@
-import type { CliOptions } from "@dynatrace/dt-app";
+import type { CliOptions } from "dt-app";
+import { LATEST_DYNATRACE_ENVIRONMENT_URL } from "env";
 
 const config: CliOptions = {
-  //CHANGE THIS TO POINT TO YOUR ENVIRONMENT:
-  environmentUrl: "https://umsaywsjuo.dev.apps.dynatracelabs.com/",
-  //environmentUrl: "https://oqr47576.sprint.apps.dynatracelabs.com/",
+  environmentUrl: LATEST_DYNATRACE_ENVIRONMENT_URL,
   icon: "./src/assets/logo.png",
   app: {
     name: "Monitoring Coverage",
@@ -15,7 +14,8 @@ const config: CliOptions = {
       { name: "environment-api", comment: "query entity model" },
       { name: "environment-api:deployment:download", comment: "OneAgent deployment" },
       { name: "environment-api:api-tokens:write", comment: "Create Installer token" },
-      { name: "storage:entities:read", comment: "Required for Grail"}
+      { name: "storage:entities:read", comment: "Required for Grail"},
+      { name: "environment-api:credentials:read", comment: "Required for retrieving a secret" }
     ],
     pageTokens: {
       root: '/'

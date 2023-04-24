@@ -1,17 +1,17 @@
-import { Flex, Heading, List, Text } from '@dynatrace/strato-components-preview';
+import { Flex, Heading, List, Paragraph, Text } from '@dynatrace/strato-components-preview';
 import React from 'react';
 
 export const AppIntro = () => {
   return (
-    <Flex flexDirection='row' gap={16} width={980}>
+    <Flex flexDirection='row' gap={16} width={980} alignSelf='center'>
       <Flex flexDirection='column'>
         <Flex gap={4} flexDirection='column'>
           <Heading as='h1'>Monitoring Coverage</Heading>
-          <Text>
+          <Paragraph>
             Visualize monitoring coverage by Dynatrace across the user's entire estate and take action to get to 100%
             quickly. In this sample app, you'll learn how to use the Smartscape topology queries, which you can use to
             understand your environment and subsequently take large-scale action using SDKs.
-          </Text>
+          </Paragraph>
         </Flex>
         <Flex gap={4} flexDirection='column'>
           <Heading as='h2' level={4}>

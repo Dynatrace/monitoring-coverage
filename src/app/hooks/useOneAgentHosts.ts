@@ -39,13 +39,15 @@ async function fetcher() {
   })
 }
 
-function demoFetcher(): CloudInfo {
-  return {
-    EC2: 900,
-    AZURE: 123,
-    GOOGLE_CLOUD_PLATFORM: 99,
-    VMWare: 202
-  }
+const demoData: CloudInfo = {
+  EC2: 900,
+  AZURE: 123,
+  GOOGLE_CLOUD_PLATFORM: 99,
+  VMWare: 202
+};
+
+function demoFetcher() {
+  return demoData;
 }
 
 export function useOneAgentHosts() {
@@ -53,6 +55,12 @@ export function useOneAgentHosts() {
 
   return useQuery({
     queryFn: demoMode ? demoFetcher : fetcher,
-    queryKey: ['one-agent-host', { demoMode }]
+    queryKey: ['one-agent-host', { demoMode }],
+    initialData: demoMode ? demoData : {
+      EC2: null,
+      AZURE: null,
+      GOOGLE_CLOUD_PLATFORM: null,
+      VMWare: null,
+    },
   });
 }

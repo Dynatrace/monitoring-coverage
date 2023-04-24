@@ -35,12 +35,12 @@ const TEXTCOLS = 120;
 
 type InstallOneagentModalProps = {
   modalOpen: boolean;
-  setModalOpen;
+  onDismiss: () => void;
   ips: string;
   cloudType: CloudType;
 };
 
-export const InstallOneAgentModal = ({ modalOpen, setModalOpen, ips, cloudType }: InstallOneagentModalProps) => {
+export const InstallOneAgentModal = ({ modalOpen, onDismiss, ips, cloudType }: InstallOneagentModalProps) => {
   const demoMode = useDemoMode();
   const queryClient = useQueryClient();
 
@@ -63,18 +63,17 @@ export const InstallOneAgentModal = ({ modalOpen, setModalOpen, ips, cloudType }
     isError: isInstallerMetaError,
   } = useOneAgentInstallerMeta({
     arch: arch[0] as GetAgentInstallerMetaInfoQueryArch,
-    osType: osType[0] as GetAgentInstallerMetaInfoPathOsType,
+    osType: osType.keys[0] as GetAgentInstallerMetaInfoPathOsType,
     installerType: installerType[0] as GetAgentInstallerMetaInfoPathInstallerType,
   });
 
   const dl1Liner = `wget -O Dynatrace-OneAgent-${
     osType.value
-  }-${version}.sh "${GEN2URL}/api/v1/deployment/installer/agent/${osType}/${installerType}/latest?arch=${arch}&flavor=default" --header="Authorization: Api-Token ${
+  }-${version}.sh "${GEN2URL}/api/v1/deployment/installer/agent/${osType.value}/${installerType}/latest?arch=${arch}&flavor=default" --header="Authorization: Api-Token ${
     demoMode ? '<TOKEN_HERE>' : token
   }"`;
   const install1Liner = `/bin/sh Dynatrace-OneAgent-${osType.value}-${version}.sh --set-infra-only=false --set-app-log-content-access=true`;
-
-  const downloadConfig = { osType: `${osType[0]}`, installerType: `${installerType[0]}` };
+  const downloadConfig = { osType: `${osType.keys[0]}`, installerType: `${installerType[0]}` };
 
   const { mutate: downloadOneAgent, isLoading: downloading } = useDownloadOneAgent();
 
@@ -117,14 +116,14 @@ export const InstallOneAgentModal = ({ modalOpen, setModalOpen, ips, cloudType }
 
   const installOneAgentHosts = () => {
     if (demoMode) {
-      updateMockHosts(queryClient,cloudType);
+      updateMockHosts(queryClient, cloudType);
     } else {
       queryClient.invalidateQueries({ queryKey: ['one-agent-host', { demoMode }] });
     }
   };
 
   return (
-    <Modal title={`Install OneAgents`} show={modalOpen} onDismiss={() => setModalOpen(false)} dismissible={true}>
+    <Modal title={`Install OneAgents`} show={modalOpen} onDismiss={onDismiss} dismissible={true}>
       <Flex flexDirection='column' gap={16}>
         <Flex>
           <OneAgentIcon />

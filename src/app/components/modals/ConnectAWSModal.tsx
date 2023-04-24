@@ -1,4 +1,4 @@
-import React, { Dispatch, FormEvent, SetStateAction, useRef, useState } from "react";
+import React, { FormEvent, useRef, useState } from "react";
 import {
   Modal,
   Flex,
@@ -10,24 +10,25 @@ import {
   PasswordInput,
   Text,
   Button,
+  FieldSet,
 } from "@dynatrace/strato-components-preview";
 import { Cloud } from "../../types/CloudTypes";
 import { useAWSCredentials } from "../../hooks/useAWSCredentials";
 
 type ConnectAWSModalProps = {
   modalOpen: boolean;
-  setModalOpen: Dispatch<SetStateAction<boolean>>;
+  onDismiss: () => void;
   selectedCloud?: Cloud;
 }
 
 export const ConnectAWSModal = ({
   modalOpen,
-  setModalOpen,
+  onDismiss,
   selectedCloud,
 }: ConnectAWSModalProps) => {
 
   const formRef = useRef<HTMLFormElement>(null);
-  const [auth, setAuth] = useState<SelectedKeys | null>(["role"]);
+  const [auth, setAuth] = useState<SelectedKeys | null>(["ROLE"]);
 
   const { mutate } = useAWSCredentials();
 
@@ -35,16 +36,18 @@ export const ConnectAWSModal = ({
     ev.preventDefault();
     if (formRef.current) {
       const formData = new FormData(formRef.current);
-      mutate(formData);
+      mutate(formData, { onSuccess: () => {
+        onDismiss();
+      }});
     }
-    setModalOpen(false);
+    onDismiss();
   }
 
   return (
     <Modal
       title={`Add ${selectedCloud?.cloud} integration`}
       show={modalOpen}
-      onDismiss={() => setModalOpen(false)}
+      onDismiss={onDismiss}
     ><form ref={formRef} onSubmit={submit}>
       <Flex flexDirection="column" gap={16}>
         <Flex flexDirection="row">
@@ -64,13 +67,15 @@ export const ConnectAWSModal = ({
             name="name"
           />
         </FormField>
-        <FormField label="Authentication method" required>
-          <Select name="auth" onChange={setAuth} selectedId={auth}>
-            <SelectOption id="key" value="key">Key-based authentication</SelectOption>
-            <SelectOption id="role" value="role">Role-based authentication</SelectOption>
-          </Select>
-        </FormField>
-        {auth?.includes("key") && (
+        <FieldSet name="authenticationData">
+          <FormField label="Authentication method" required>
+            <Select name="auth" onChange={setAuth} selectedId={auth}>
+              <SelectOption id="KEYS" value="KEYS">Key-based authentication</SelectOption>
+              <SelectOption id="ROLE" value="ROLE">Role-based authentication</SelectOption>
+            </Select>
+          </FormField>
+        </FieldSet>
+        {auth?.includes("KEYS") ? (
           <Flex flexDirection="column" gap={16}>
             <Select defaultSelectedId={["AWS_DEFAULT"]} name="partition">
               <SelectOption id="AWS_DEFAULT" value="AWS_DEFAULT">Default</SelectOption>
@@ -92,8 +97,8 @@ export const ConnectAWSModal = ({
               />
             </FormField>
           </Flex>
-        )}
-        {auth?.includes("role") && (
+        ) : <input type="hidden" value="AWS_DEFAULT" name="partition" />}
+        {auth?.includes("ROLE") && (
           <Flex flexDirection="column" gap={16}>
             <FormField label="IAM role that Dynatrace should use to get monitoring data">
               <TextInput

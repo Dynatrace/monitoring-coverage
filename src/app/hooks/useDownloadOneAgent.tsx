@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Meta } from "../types/Meta";
 
 type Config = { osType: string, installerType: string };
@@ -16,21 +16,16 @@ async function fetcher(config: Config) {
 }
 
 export function useDownloadOneAgent() {
-  const queryClient = useQueryClient();
-
-
   const meta: Meta = {
     errorTitle: 'Agent download failed.',
   }
 
   return useMutation({
     mutationFn: (config: Config) => {
-      const cached = queryClient.getQueryData<string>(['one-agent-download-url', config]);
-      return cached ? Promise.resolve(cached) : fetcher(config);
+      return fetcher(config);
     },
     meta,
-    onSuccess: (url, config) => {
-      queryClient.setQueryData(['one-agent-download-url', config], url);
+    onSuccess: (url) => {
       const dlLink = document.createElement("a");
       dlLink.href = url;
       dlLink.download = "oneagent.sh";

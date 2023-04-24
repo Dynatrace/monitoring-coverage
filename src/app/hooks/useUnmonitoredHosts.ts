@@ -1,6 +1,8 @@
 import { queryExecutionClient } from '@dynatrace-sdk/client-query';
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CloudType, UnmonitoredCloud } from '../types/CloudTypes';
+import { useDemoMode } from './useDemoMode';
+import { updateMockData } from '../components/demo/update-mock-data';
 
 type CloudQueryMap = { [key in CloudType]: string }
 
@@ -49,9 +51,16 @@ async function fetcher(cloudType: CloudType) {
   })
 }
 
+function demoFetcher(queryClient: QueryClient, cloudType: CloudType) {
+  return updateMockData(queryClient, cloudType);
+}
+
 export function useUnmonitoredHosts(cloudType: CloudType) {
+  const demoMode = useDemoMode();
+  const queryClient = useQueryClient();
+
   return useQuery({
-    queryFn: () => fetcher(cloudType),
-    queryKey: ['unmonitored-hosts', cloudType]
+    queryFn: () => demoMode ? demoFetcher(queryClient, cloudType) : fetcher(cloudType),
+    queryKey: ['unmonitored-hosts', cloudType],
   });
 }

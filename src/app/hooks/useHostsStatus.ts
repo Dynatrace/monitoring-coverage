@@ -59,6 +59,6 @@ export function useHostsStatus(cloudType: CloudType) {
 
   return useQuery({
     queryFn: () => demoMode ? demoFetcher(cloudType) : fetcher(cloudType),
-    queryKey: ['hosts-status', cloudType, { demoMode }]
+    queryKey: ['hosts-status', cloudType, { demoMode }],
   });
 }

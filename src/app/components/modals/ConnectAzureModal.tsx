@@ -1,4 +1,4 @@
-import React, { Dispatch, FormEvent, SetStateAction, useRef } from "react";
+import React, { FormEvent, useRef } from "react";
 import {
   Modal,
   Flex,
@@ -13,13 +13,13 @@ import { useAzureCredentials } from "../../hooks/useAzureCredentials";
 
 type ConnectAzureModalProps = {
   modalOpen: boolean;
-  setModalOpen: Dispatch<SetStateAction<boolean>>;
+  onDismiss: () => void;
   selectedCloud: Cloud;
 }
 
 export const ConnectAzureModal = ({
   modalOpen,
-  setModalOpen,
+  onDismiss,
   selectedCloud,
 }: ConnectAzureModalProps) => {
 
@@ -33,11 +33,11 @@ export const ConnectAzureModal = ({
       const formData = new FormData(formRef.current);
       mutate(formData);
     }
-    setModalOpen(false);
+    onDismiss();
   }
 
   return (
-    <Modal title={`Add ${selectedCloud.cloud} integration`} show={modalOpen} onDismiss={() => setModalOpen(false)}>
+    <Modal title={`Add ${selectedCloud.cloud} integration`} show={modalOpen} onDismiss={onDismiss}>
       <form ref={formRef} onSubmit={submit}>
         <Flex flexDirection="column" gap={16}>
           <Flex flexDirection="row">

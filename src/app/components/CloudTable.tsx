@@ -27,8 +27,7 @@ import { useUnmonitoredHosts } from '../hooks/useUnmonitoredHosts';
 import { OneAgentHostsCell } from './cells/OneAgentHostsCell';
 
 export const CloudTable = () => {
-  const [cloudModalOpen, setCloudModalOpen] = useState(false);
-  const [oneagentModalOpen, setOneagentModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState<'connect-cloud' | 'install-oneagents' | null>(null);
   const [selectedCloud, setSelectedCloud] = useState<Cloud>(CLOUDS[0]);
 
   const { data: unmonitoredHosts } = useUnmonitoredHosts(selectedCloud?.cloudType);
@@ -36,9 +35,6 @@ export const CloudTable = () => {
 
   const columns = useMemo<TableColumn[]>(
     () => [
-      {
-        ...TABLE_EXPANDABLE_DEFAULT_COLUMN,
-      },
       {
         header: 'Cloud provider',
         width: 170,
@@ -61,7 +57,7 @@ export const CloudTable = () => {
       {
         header: 'Cloud hosts',
         width: 100,
-        alignment: "right",
+        alignment: 'right',
         cell: ({ row }) => {
           return <HostsCell type={row.original.cloudType} />;
         },
@@ -69,17 +65,15 @@ export const CloudTable = () => {
       {
         accessor: 'oneagentHosts',
         header: 'OneAgent hosts',
-        alignment: "right",
+        alignment: 'right',
         width: 100,
         cell: ({ row }) => {
-          // console.log("oneagentHosts:",value,row.original)
-          // return value !== null && !isNaN(value) ? value : '-';
           return <OneAgentHostsCell type={row.original.cloudType} />;
         },
       },
       {
         header: 'OneAgent coverage',
-        alignment: "right",
+        alignment: 'right',
         width: 120,
         cell: ({ row }) => {
           return <OneAgentCoverageCell type={row.original.cloudType} />;
@@ -94,18 +88,17 @@ export const CloudTable = () => {
       },
       {
         header: 'Actions',
-        width: 170,
-        alignment: "center",
+        alignment: 'left',
+        width: 160,
         cell: ({ row }) => {
           return (
-            <Flex minWidth={180}>
-              <ActionsCell
-                cloud={row.original}
-                setSelectedCloud={setSelectedCloud}
-                setOneagentModalOpen={setOneagentModalOpen}
-                setCloudModalOpen={setCloudModalOpen}
-              />
-            </Flex>
+            <ActionsCell
+              type={row.original.cloudType}
+              onClick={(action) => {
+                setSelectedCloud(row.original);
+                setModalOpen(action);
+              }}
+            />
           );
         },
       },
@@ -127,7 +120,7 @@ export const CloudTable = () => {
                 <Menu.Item
                   onSelect={() => {
                     setSelectedCloud(row.original);
-                    setCloudModalOpen(true);
+                    setModalOpen('connect-cloud');
                   }}
                 >
                   <Menu.ItemIcon>
@@ -138,7 +131,7 @@ export const CloudTable = () => {
                 <Menu.Item
                   onSelect={() => {
                     setSelectedCloud(row.original);
-                    setOneagentModalOpen(true);
+                    setModalOpen('install-oneagents');
                   }}
                 >
                   <Menu.ItemIcon>
@@ -152,7 +145,7 @@ export const CloudTable = () => {
         },
       },
     ],
-    [open], //<- @Fabian, what is this??
+    [],
   );
 
   return (
@@ -160,41 +153,46 @@ export const CloudTable = () => {
       <DataTable
         columns={columns}
         data={CLOUDS}
+        fullWidth
         variant={{
           contained: true,
           rowSeparation: 'horizontalDividers',
           verticalDividers: true,
         }}
-        resizable={true}
+        resizable
       >
         <DataTable.ExpandableRow>
           {({ row }) => {
-            console.log(row);
             return <HostsTable type={row.cloudType} />;
           }}
         </DataTable.ExpandableRow>
       </DataTable>
-      {cloudModalOpen && selectedCloud && (
+      {modalOpen === 'connect-cloud' && selectedCloud && (
         <>
           <ConnectCloudModal
-            modalOpen={cloudModalOpen && selectedCloud?.cloudType != 'EC2' && selectedCloud?.cloudType != 'AZURE'}
-            setModalOpen={setCloudModalOpen}
+            modalOpen={selectedCloud?.cloudType != 'EC2' && selectedCloud?.cloudType != 'AZURE'}
+            onDismiss={() => setModalOpen(null)}
             selectedCloud={selectedCloud}
           />
           <ConnectAWSModal
-            modalOpen={cloudModalOpen && selectedCloud?.cloudType === 'EC2'}
-            setModalOpen={setCloudModalOpen}
+            modalOpen={selectedCloud?.cloudType === 'EC2'}
+            onDismiss={() => setModalOpen(null)}
             selectedCloud={selectedCloud}
           />
           <ConnectAzureModal
-            modalOpen={cloudModalOpen && selectedCloud?.cloudType == 'AZURE'}
-            setModalOpen={setCloudModalOpen}
+            modalOpen={selectedCloud?.cloudType == 'AZURE'}
+            onDismiss={() => setModalOpen(null)}
             selectedCloud={selectedCloud}
           />
         </>
       )}
-      {oneagentModalOpen && selectedCloud && (
-        <InstallOneAgentModal modalOpen={oneagentModalOpen} setModalOpen={setOneagentModalOpen} ips={ips} cloudType={selectedCloud.cloudType}/>
+      {selectedCloud && (
+        <InstallOneAgentModal
+          modalOpen={modalOpen === 'install-oneagents'}
+          onDismiss={() => setModalOpen(null)}
+          ips={ips}
+          cloudType={selectedCloud.cloudType}
+        />
       )}
     </>
   );

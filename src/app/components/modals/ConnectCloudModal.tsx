@@ -9,13 +9,13 @@ import { updateMockData } from "../demo/update-mock-data";
 
 type ConnectCloudModalProps = {
   modalOpen: boolean;
-  setModalOpen: Dispatch<SetStateAction<boolean>>;
+  onDismiss: () => void;
   selectedCloud: Cloud;
 }
 
 export const ConnectCloudModal = ({
   modalOpen,
-  setModalOpen,
+  onDismiss,
   selectedCloud,
 }: ConnectCloudModalProps) => {
   const demoMode = useDemoMode();
@@ -25,7 +25,7 @@ export const ConnectCloudModal = ({
   const queryClient = useQueryClient();
 
   return (
-    <Modal title={`Add ${selectedCloud.cloud} integration`} show={modalOpen} onDismiss={() => setModalOpen(false)}>
+    <Modal title={`Add ${selectedCloud.cloud} integration`} show={modalOpen} onDismiss={onDismiss}>
       <Flex flexDirection="column" gap={16}>
         <Flex flexDirection="row">
           <Text>
@@ -53,7 +53,7 @@ export const ConnectCloudModal = ({
                 if (selectedCloud) {
                   updateMockData(queryClient, selectedCloud.cloudType);
                 }
-                setModalOpen(false);
+                onDismiss();
               }}
             >
               Connect
@@ -72,9 +72,7 @@ export const ConnectCloudModal = ({
           )}
           <Button
             variant="default"
-            onClick={() => {
-              setModalOpen(false);
-            }}
+            onClick={onDismiss}
           >
             Done
           </Button>
