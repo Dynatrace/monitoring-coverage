@@ -14,10 +14,6 @@ type ActionsCellProps = {
   setCloudModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const BUTTON_TEXT_STYLE = {
-  minWidth: 120,
-};
-
 export const ActionsCell = ({ cloud, setSelectedCloud, setOneagentModalOpen, setCloudModalOpen }: ActionsCellProps) => {
   const status = useHostsStatus(cloud.cloudType);
   const oneagent = useOneAgentHosts();
@@ -34,7 +30,7 @@ export const ActionsCell = ({ cloud, setSelectedCloud, setOneagentModalOpen, set
   if (!status.data.status || coverage > 100) {
     return (
       <Button
-        width='full'
+        width={'120px'}
         variant='accent'
         onClick={() => {
           setSelectedCloud(cloud);
@@ -44,14 +40,14 @@ export const ActionsCell = ({ cloud, setSelectedCloud, setOneagentModalOpen, set
         <Button.Prefix>
           <SyncIcon />
         </Button.Prefix>
-        <div style={BUTTON_TEXT_STYLE}>Connect cloud</div>
+        Connect cloud
       </Button>
     );
   }
   if (coverage < 100) {
     return (
       <Button
-        width='full'
+        width={'120px'}
         variant='emphasized'
         onClick={() => {
           setSelectedCloud(cloud);
@@ -61,7 +57,7 @@ export const ActionsCell = ({ cloud, setSelectedCloud, setOneagentModalOpen, set
         <Button.Prefix>
           <OneAgentIcon />
         </Button.Prefix>
-        <div style={BUTTON_TEXT_STYLE}>Install OneAgents</div>
+        Install OneAgents
       </Button>
     );
   }
