@@ -20,7 +20,7 @@ export const StatusCell = ({ type }: StatusCellProps) => {
 
   if (data.status) {
     return (
-      <Indicator state="neutral">
+      <Indicator state='neutral'>
         <SyncDoneIcon />
         <span>Connected</span>
       </Indicator>

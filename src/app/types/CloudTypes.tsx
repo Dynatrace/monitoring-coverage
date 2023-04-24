@@ -1,15 +1,15 @@
-import { ResultRecord } from "@dynatrace-sdk/client-query";
+import { ResultRecord } from '@dynatrace-sdk/client-query';
 
 export interface UnmonitoredCloud extends ResultRecord {
-  id: string;
-  "entity.name": string;
-  "entity.detected_name": string;
-  ipAddress: string;
+  'id': string;
+  'entity.name': string;
+  'entity.detected_name': string;
+  'ipAddress': string;
 }
 
-export type CloudHostStatus = { hosts?: number, status?: boolean };
+export type CloudHostStatus = { hosts?: number; status?: boolean };
 
-export type CloudType = "EC2" | "GOOGLE_CLOUD_PLATFORM" | "VMWare" | "AZURE";
+export type CloudType = 'EC2' | 'GOOGLE_CLOUD_PLATFORM' | 'VMWare' | 'AZURE';
 
 export interface Cloud {
   cloudType: CloudType;

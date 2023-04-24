@@ -27,7 +27,7 @@ export const ActionsCell = ({ type, onClick }: ActionsCellProps) => {
 
   if (!status.data.status || coverage > 100) {
     return (
-      <Button width="full" variant='accent' onClick={() => onClick('connect-cloud')}>
+      <Button width='full' variant='accent' onClick={() => onClick('connect-cloud')}>
         <Button.Prefix>
           <SyncIcon />
         </Button.Prefix>
@@ -37,7 +37,7 @@ export const ActionsCell = ({ type, onClick }: ActionsCellProps) => {
   }
   if (coverage < 100) {
     return (
-      <Button width="full" variant='emphasized' onClick={() => onClick('install-oneagents')}>
+      <Button width='full' variant='emphasized' onClick={() => onClick('install-oneagents')}>
         <Button.Prefix>
           <OneAgentIcon />
         </Button.Prefix>

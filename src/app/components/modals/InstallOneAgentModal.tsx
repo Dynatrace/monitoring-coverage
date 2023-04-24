@@ -69,7 +69,9 @@ export const InstallOneAgentModal = ({ modalOpen, onDismiss, ips, cloudType }: I
 
   const dl1Liner = `wget -O Dynatrace-OneAgent-${
     osType.value
-  }-${version}.sh "${GEN2URL}/api/v1/deployment/installer/agent/${osType.value}/${installerType}/latest?arch=${arch}&flavor=default" --header="Authorization: Api-Token ${
+  }-${version}.sh "${GEN2URL}/api/v1/deployment/installer/agent/${
+    osType.value
+  }/${installerType}/latest?arch=${arch}&flavor=default" --header="Authorization: Api-Token ${
     demoMode ? '<TOKEN_HERE>' : token
   }"`;
   const install1Liner = `/bin/sh Dynatrace-OneAgent-${osType.value}-${version}.sh --set-infra-only=false --set-app-log-content-access=true`;

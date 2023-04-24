@@ -5,7 +5,7 @@ import { App } from './app/App';
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToastContainer, showToast } from '@dynatrace/strato-components-preview';
 import { Meta } from './app/types/Meta';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,13 +18,13 @@ const queryClient = new QueryClient({
     onSuccess: (_, query) => {
       if (query.meta) {
         const { successTitle, successMessage } = query.meta as Meta;
-        successTitle && showToast({ title: successTitle, message: successMessage, type: 'info', lifespan: 4000, })
+        successTitle && showToast({ title: successTitle, message: successMessage, type: 'info', lifespan: 4000 });
       }
     },
     onError: (error: Error, query) => {
       if (query.meta) {
         const { errorTitle } = query.meta as Meta;
-        errorTitle && showToast({ title: errorTitle, message: error.message, type: 'critical' })
+        errorTitle && showToast({ title: errorTitle, message: error.message, type: 'critical' });
       }
     },
   }),
@@ -32,17 +32,17 @@ const queryClient = new QueryClient({
     onSuccess: (data, variables, context, mutation) => {
       if (mutation.meta) {
         const { successTitle, successMessage } = mutation.meta as Meta;
-        successTitle && showToast({ title: successTitle, message: successMessage, type: 'info', lifespan: 4000, })
+        successTitle && showToast({ title: successTitle, message: successMessage, type: 'info', lifespan: 4000 });
       }
     },
 
     onError: (error: Error, variables, context, mutation) => {
       if (mutation.meta) {
         const { errorTitle } = mutation.meta as Meta;
-        errorTitle && showToast({ title: errorTitle, message: error.message, type: 'critical' })
+        errorTitle && showToast({ title: errorTitle, message: error.message, type: 'critical' });
       }
     },
-  })
+  }),
 });
 
 ReactDOM.render(

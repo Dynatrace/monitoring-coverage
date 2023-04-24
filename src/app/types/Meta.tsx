@@ -3,4 +3,4 @@ export type Meta = {
   errorTitle?: string;
   successMessage?: string;
   successTitle?: string;
-}
+};

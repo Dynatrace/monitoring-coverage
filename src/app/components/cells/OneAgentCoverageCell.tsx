@@ -25,7 +25,8 @@ export const OneAgentCoverageCell = ({ type }: OneAgentCoverageCellProps) => {
   const coverage = coverageRatio(status.data, oneagent.data[type]);
   if (coverage > 100) return <Indicator state='critical'>&gt; 100%</Indicator>;
   if (coverage == 100) return <Indicator state='success'>100%</Indicator>;
-  if (!isNaN(coverage) && coverage < 90) return <Indicator state='warning'>{format(coverage, { input: units.percentage.percent })}</Indicator>;
+  if (!isNaN(coverage) && coverage < 90)
+    return <Indicator state='warning'>{format(coverage, { input: units.percentage.percent })}</Indicator>;
   if (!isNaN(coverage)) return <>{format(coverage, { input: units.percentage.percent })}</>;
   return <>-</>;
 };

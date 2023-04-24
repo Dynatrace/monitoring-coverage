@@ -45,16 +45,19 @@ async function fetcher(formData: FormData) {
   };
   const url = `${ENVIRONMENT_URL}api/config/v1/aws/credentials`;
 
-  return functions.call("gen-2-proxy", { url, requestInit }).then((res) => res.json()).then((data) => {
-    if(data.error) {
-      let message = data.error.message;
-      if (data.error.constraintViolations) {
-        message += data.error.constraintViolations.map((violation) => violation.message).join('. ')
+  return functions
+    .call('gen-2-proxy', { url, requestInit })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.error) {
+        let message = data.error.message;
+        if (data.error.constraintViolations) {
+          message += data.error.constraintViolations.map((violation) => violation.message).join('. ');
+        }
+        throw new Error(message);
       }
-      throw new Error(message)
-    }
-    return data;
-  });
+      return data;
+    });
 }
 
 export function useAWSCredentials() {
@@ -65,18 +68,18 @@ export function useAWSCredentials() {
     successTitle: 'Cloud connection created',
     successMessage: 'Successfully created connection to AWS.',
     errorTitle: 'Failed to create connection to AWS.',
-  }
+  };
 
   return useMutation({
-    mutationFn: (formData: FormData) => demoMode ? noop() : fetcher(formData),
+    mutationFn: (formData: FormData) => (demoMode ? noop() : fetcher(formData)),
     mutationKey: [{ demoMode }],
     meta,
     onSuccess: () => {
       if (demoMode) {
         updateMockData(queryClient, 'EC2');
         showToast({
-          title: "(mock) Cloud connection created",
-          type: "info",
+          title: '(mock) Cloud connection created',
+          type: 'info',
           message: `Successfully created connection to 'AWS'`,
           lifespan: 4000,
         });
