@@ -6,7 +6,7 @@ export function updateMockHosts(queryClient: QueryClient, cloudType: CloudType) 
 
   queryClient.setQueryData(['one-agent-host', { demoMode: true }], (prev) => {
     if (prev !== undefined && cloudHosts) {
-      return { ...prev, cloudType: cloudHosts.hosts };
+      return { ...prev, [cloudType]: cloudHosts.hosts };
     }
     return prev;
   });
