@@ -54,8 +54,8 @@ export function useAzureCredentials() {
 
   const meta: Meta = {
     successTitle: 'Cloud connection created',
-    successMessage: 'Successfully created connection to Azure.',
-    errorTitle: 'Failed to create connection to Azure.',
+    successMessage: 'Successfully created connection to Azure.' + (demoMode ? ' (demo)' : ''),
+    errorTitle: 'Failed to create connection to Azure.' + (demoMode ? ' (demo)' : ''),
   };
 
   return useMutation({
@@ -65,12 +65,6 @@ export function useAzureCredentials() {
     onSuccess: () => {
       if (demoMode) {
         updateMockData(queryClient, 'AZURE');
-        showToast({
-          title: '(mock) Cloud connection created',
-          type: 'info',
-          message: `Successfully created connection to 'AZURE'`,
-          lifespan: 4000,
-        });
       } else {
         // trigger a refetch for host status after mutation was successful by invalidating the query
         queryClient.invalidateQueries({ queryKey: ['hosts-status', 'AZURE'] });

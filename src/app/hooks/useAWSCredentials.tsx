@@ -66,8 +66,8 @@ export function useAWSCredentials() {
 
   const meta: Meta = {
     successTitle: 'Cloud connection created',
-    successMessage: 'Successfully created connection to AWS.',
-    errorTitle: 'Failed to create connection to AWS.',
+    successMessage: 'Successfully created connection to AWS.' + (demoMode ? ' (demo)' : ''),
+    errorTitle: 'Failed to create connection to AWS.' + (demoMode ? ' (demo)' : ''),
   };
 
   return useMutation({
@@ -77,12 +77,6 @@ export function useAWSCredentials() {
     onSuccess: () => {
       if (demoMode) {
         updateMockData(queryClient, 'EC2');
-        showToast({
-          title: '(mock) Cloud connection created',
-          type: 'info',
-          message: `Successfully created connection to 'AWS'`,
-          lifespan: 4000,
-        });
       } else {
         // trigger a refetch for host status after mutation was successful by invalidating the query
         queryClient.invalidateQueries({ queryKey: ['hosts-status', 'EC2'] });
