@@ -117,143 +117,33 @@ So now we have all of our data, let's make it easy for our whole team to use it 
 
 Follow directions on https://developer.dynatrace.com/preview/getting-started/quickstart/ to create an app
 
-## Let's sketch out our UI
+## Use Strato components to sketch your UI
 
-Create a new Page `Coverage.tsx`.
+Strato has many prebuilt components from which to build your UI. This makes coding your app quick and
+easy, and means it automatically has a native Dynatrace look and feel. For example, use `DataTable` for
+presenting tabular data you get from DQL. Use `Button` for any number of user interactions. The [Developer Portal](https://developer.dynatrace.com/preview/reference/design-system/) also includes many examples of how to use each component. Be sure to hardcode some sample data into your app to make testing easier.
 
-### Add our necessary imports
+## Build hooks for your DQL queries
 
-```
-import React, {useState} from "react";
-import { Flex, Heading } from "@dynatrace/wave-components-preview";
+Now that you have a rough UI, let's take the DQL queries from our Notebook above and create a "hook" to use
+that data in our app. The [Developer Portal](https://developer.dynatrace.com/preview/develop/data/query-and-visualize/)
+also has many examples of how to query Grail and visualize the data in your app. Remember keeping your UI and data layers abstracted makes it easier to debug and maintain your app.
 
-export const Coverage = () => {
-    return (
+## Take action with SDKs
 
-    )
-}
-```
+Dynatrace's SDKs wrap many of the APIs available in Dynatrace with an easy to use interface for your applications. You
+can see all of the SDKs that are available on the [Developer Portal](https://developer.dynatrace.com/preview/reference/sdks/). These allow you to do many things like:
+- Change Dynatrace settings
+- Update ActiveGates and OneAgents
+- Deploy extensions
+just to name a few.
 
-### Sketch the UI
-We will use `Flex` components for creating columns and rows and for positioning. We'll just leave placeholders for Icon and Table components that'll create next.
-```
-<Flex flexDirection="column">
-    <Heading>Monitoring Coverage</Heading>
-    <Flex flexDirection="column">
-        <Flex flexDirection="row">
-            <div>Icon</div>
-            <Heading level={2}>Hybrid Cloud</Heading>
-        </Flex>
-        <div>Cloud table</div>
-    </Flex>
-    <Flex flexDirection="column">
-        <Flex flexDirection="row">
-            <div>Icon</div>
-            <Heading level={2}>Unmonitored Hosts</Heading>
-        </Flex>
-        <div>Unmonitored hosts table</div>
-    </Flex>
-</Flex>
-```
-Run your app now with `npm run start` to see how it looks.
+## Other packages
 
-### Sketch tables
-Next, create components `CloudTable` and `UnmonitoredHostTable`:
-```
-<div>
-    <DataTable columns={columns} data={data} />
-    <Modal title={`Add integration`} show={modalOpen} onDismiss={() => setModalOpen(false)}>
-    <Flex flexDirection="column">
-        <span>Get info from user here:</span>
-        <Flex flexItem flexGrow={0}>
-        <Button
-            variant="primary"
-            onClick={() => {
-            setModalOpen(false);
-            }}
-        >
-            Connect
-        </Button>
-        </Flex>
-    </Flex>
-    </Modal>
-</div>
-```
+Your app isn't limited to just the packages that come from Dynatrace. This Sample App also uses a package called [TanStack Query](https://www.npmjs.com/package/@tanstack/react-query). This particular package makes it easy to cache query results and update state only when necessary. The ability to use Open Source packages means it is easy and straightforward to solve any problem with Dynatrace AppEngine. Be sure to leave us feedback on our [Developer Forum](https://community.dynatrace.com/t5/Developers/ct-p/developers) whenever you think we should add new visuals to Strato or functionality to SDKs!
 
-After you've imported the necessary components `DataTable`, `Modal`, `Flex`, and `Button` you'll notice you still have other unresolved symbols. We need a state variable to tell whether our popup, or modal, is open or not. Let's import `useState` from React and add it above the `return` in our component, like this:
-```
-export const CloudTable = () => {
-  const [modalOpen, setModalOpen] = useState(false);
-  ...
-```
+## Test and deploy
 
-You'll also notice that `DataTable` wants some inputs. For now, just stub out your tables with some fake values, like so:
-```
-  const columns = useMemo<TableColumn[]>(
-    () => [
-      { accessor: "cloud" },
-      { accessor: "status" },
-      { accessor: "hosts" },
-      {
-        header: "Actions",
-        cell: () => {
-          return (
-            <Flex>
-              <Button
-                onClick={() => {
-                  setModalOpen(true);
-                }}
-              >
-                Setup
-              </Button>
-            </Flex>
-          );
-        },
-      },
-    ],
-    []
-  );
-  const data = [
-    { cloud: "AWS", status: "??", hosts: "??" },
-    { cloud: "Azure", status: "??", hosts: "??" },
-    { cloud: "GCP", status: "??", hosts: "??" },
-    { cloud: "VMWare", status: "??", hosts: "??" },
-  ];
-```
+When you run `npm run start` your app is running from your local workstation. This means you can test your app without affecting other users on your Dynatrace tenant. When you are ready to share with your colleagues, you can use `npx dt-app deploy` to deploy your app to your tenant. You will then see your app in the Apps menu in your Dynatrace tenant.
 
-Let's also replace the placeholders `<div>`s in our page with our new components and run our app again.
-
-## Create hooks for our data
-
-A hook allows us to change our app's state based on our process for getting the data. The template already includes a `useDQLQuery` hook which we could adapt, or we can create our own. For simplicity, let's create our own called `useRealCloudData` and use `queryClient` to execute DQL.
-```
-const fetchQueries = () => {
-    try {
-      setRunningDQL(true);
-      const oneAgentHostsQuery = queryClient.query({
-        //get the number of hosts with OneAgents, split by cloud
-        query: `fetch dt.entity.host
-              | filter cloudType <> "" OR hypervisorType == "VMWARE"
-              | fieldsAdd cloud = if(cloudType <> "", cloudType, else:"VMWare")
-              | summarize by:{cloud}, count()`,
-      });
-      ...
-```
-
-Now we'll call `useRealCloudData` in our Coverage page and pass the data to our tables:
-```
-const { realCloudData, fetchQueries, runningDQL } = useRealCloudData();
-```
-
-```
-<Flex flexDirection="column">
-  <CloudTable
-    data={demoMode ? mockCloudData : realCloudData}
-    fetchQueries={fetchQueries}
-    demoMode={demoMode}
-    runningDQL={runningDQL}
-  />
-</Flex>
-```
-
-Now you should be able to run the app again and see real Smartscape data from DQL!
+We hope you enjoyed this Sample App. See `CONTRIBUTING.md` if you would like to add features to it.
