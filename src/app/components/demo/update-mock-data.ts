@@ -10,7 +10,7 @@ export function updateMockData(queryClient: QueryClient, cloudType: CloudType) {
     status: true,
     hosts: Math.round((1 + Math.random()) * demoHosts),
   };
-  const unmonitoredHosts = generateHostData(hostStatus.hosts - demoHosts, 'NEWCLOUDHOST', 'newcloud');
+  const unmonitoredHosts = generateHostData(hostStatus.hosts - demoHosts, `NEW_${cloudType}_HOST`, 'newcloud');
 
   queryClient.setQueryData<CloudHostStatus>(['hosts-status', cloudType, { demoMode: true }], hostStatus);
   queryClient.setQueryData<UnmonitoredCloud[]>(['unmonitored-hosts', cloudType], unmonitoredHosts);

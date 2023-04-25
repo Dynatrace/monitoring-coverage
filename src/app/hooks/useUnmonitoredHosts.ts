@@ -62,6 +62,6 @@ export function useUnmonitoredHosts(cloudType: CloudType) {
 
   return useQuery({
     queryFn: () => (demoMode ? demoFetcher(queryClient, cloudType) : fetcher(cloudType)),
-    queryKey: ['unmonitored-hosts', cloudType],
+    queryKey: ['unmonitored-hosts', cloudType, {demoMode}],
   });
 }
