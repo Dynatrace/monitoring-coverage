@@ -25,7 +25,7 @@ async function fetcher(formData: FormData) {
     scope: "environment",
   } as SettingsObjectCreate;
 
-  return settingsObjectsClient.postSettingsObjects({body: [vmwarePayload]}) as any;
+  return settingsObjectsClient.postSettingsObjects({body: [vmwarePayload]});
 }
 
 export function useVMWareSettings() {
