@@ -1,6 +1,6 @@
 {
   "name": "monitoring-coverage",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "A sample app helping you get to 100% cloud coverage",
   "engines": {
     "node": ">=16.13.0"

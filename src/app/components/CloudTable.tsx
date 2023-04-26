@@ -14,6 +14,7 @@ import { InstallOneAgentModal } from './modals/InstallOneAgentModal';
 import { Cloud } from '../types/CloudTypes';
 import { ConnectAWSModal } from './modals/ConnectAWSModal';
 import { ConnectAzureModal } from './modals/ConnectAzureModal';
+import { ConnectVMWareModal } from './modals/ConnectVMWareModal';
 import { HostsTable } from './HostsTable';
 import { OneAgentIcon } from '../icons/OneAgent';
 import { HostsCell } from './cells/HostsCell';
@@ -169,7 +170,7 @@ export const CloudTable = () => {
       {modalOpen === 'connect-cloud' && selectedCloud && (
         <>
           <ConnectCloudModal
-            modalOpen={selectedCloud?.cloudType != 'EC2' && selectedCloud?.cloudType != 'AZURE'}
+            modalOpen={selectedCloud?.cloudType == 'GOOGLE_CLOUD_PLATFORM'}
             onDismiss={() => setModalOpen(null)}
             selectedCloud={selectedCloud}
           />
@@ -180,6 +181,11 @@ export const CloudTable = () => {
           />
           <ConnectAzureModal
             modalOpen={selectedCloud?.cloudType == 'AZURE'}
+            onDismiss={() => setModalOpen(null)}
+            selectedCloud={selectedCloud}
+          />
+          <ConnectVMWareModal
+            modalOpen={selectedCloud?.cloudType == 'VMWare'}
             onDismiss={() => setModalOpen(null)}
             selectedCloud={selectedCloud}
           />

@@ -34,3 +34,5 @@ export const CLOUDS: Cloud[] = [
     setupPath: '/#settings/vmwaremonitoring',
   },
 ];
+
+export const VMWARE_SETTINGS_SCHEMA = "builtin:virtualization.vmware";

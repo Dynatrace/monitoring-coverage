@@ -18,3 +18,11 @@ export interface Cloud {
   cloud: string;
   setupPath: string;
 }
+
+export type VmwareSetting = {
+  enabled: boolean;
+  label: string;
+  ipaddress: string;
+  username: string;
+  password?: string;
+}
