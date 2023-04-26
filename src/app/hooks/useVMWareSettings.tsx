@@ -11,13 +11,13 @@ async function noop() {
 }
 
 async function fetcher(formData: FormData) {
-  const vmwareSettings = {
+  const vmwareSettings : VmwareSetting = {
     enabled: true,
     label: formData.get('label'),
     ipaddress: formData.get('ipaddress'),
     username: formData.get('username'),
     password: formData.get('password'),
-  } as VmwareSetting;
+  }
 
   const vmwarePayload = {
     schemaId: VMWARE_SETTINGS_SCHEMA,
