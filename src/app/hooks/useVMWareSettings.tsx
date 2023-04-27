@@ -7,10 +7,10 @@ import { VmwareSetting } from '../types/CloudTypes';
 import { VMWARE_SETTINGS_SCHEMA } from "../constants";
 
 async function noop() {
-  return Promise.resolve() as unknown as Promise<Response>;
+  return Promise.resolve();
 }
 
-async function fetcher(formData: FormData): Promise<unknown> {
+async function fetcher(formData: FormData) {
   const vmwareSettings : VmwareSetting = {
     enabled: true,
     label: formData.get('label')?.toString() || "",
@@ -25,7 +25,7 @@ async function fetcher(formData: FormData): Promise<unknown> {
     scope: "environment",
   } as SettingsObjectCreate;
 
-  return settingsObjectsClient.postSettingsObjects({body: [vmwarePayload]});
+  await settingsObjectsClient.postSettingsObjects({body: [vmwarePayload]});
 }
 
 export function useVMWareSettings() {
@@ -40,7 +40,6 @@ export function useVMWareSettings() {
 
   return useMutation({
     mutationFn: (formData: FormData) => (demoMode ? noop() : fetcher(formData)),
-    mutationKey: [{ demoMode }],
     meta,
     onSuccess: () => {
       if (demoMode) {
