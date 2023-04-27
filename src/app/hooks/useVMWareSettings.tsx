@@ -19,11 +19,11 @@ async function fetcher(formData: FormData) {
     password: formData.get('password')?.toString() || "",
   }
 
-  const vmwarePayload = {
+  const vmwarePayload: SettingsObjectCreate = {
     schemaId: VMWARE_SETTINGS_SCHEMA,
     value: vmwareSettings,
     scope: "environment",
-  } as SettingsObjectCreate;
+  };
 
   await settingsObjectsClient.postSettingsObjects({body: [vmwarePayload]});
 }
