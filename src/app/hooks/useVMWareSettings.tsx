@@ -10,13 +10,13 @@ async function noop() {
   return Promise.resolve() as unknown as Promise<Response>;
 }
 
-async function fetcher(formData: FormData) {
+async function fetcher(formData: FormData): Promise<unknown> {
   const vmwareSettings : VmwareSetting = {
     enabled: true,
-    label: formData.get('label'),
-    ipaddress: formData.get('ipaddress'),
-    username: formData.get('username'),
-    password: formData.get('password'),
+    label: formData.get('label')?.toString() || "",
+    ipaddress: formData.get('ipaddress')?.toString() || "",
+    username: formData.get('username')?.toString() || "",
+    password: formData.get('password')?.toString() || "",
   }
 
   const vmwarePayload = {

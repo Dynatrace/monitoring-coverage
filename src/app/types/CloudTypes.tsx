@@ -19,7 +19,7 @@ export interface Cloud {
   setupPath: string;
 }
 
-export type VmwareSetting = {
+export interface VmwareSetting {
   enabled: boolean;
   label: string;
   ipaddress: string;
