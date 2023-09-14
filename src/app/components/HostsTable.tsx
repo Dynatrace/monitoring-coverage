@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { DataTable, Menu, Button, IntentButton, LoadingIndicator, Text } from '@dynatrace/strato-components-preview';
+import { DataTable, Menu, Button, IntentButton, ProgressCircle, Text } from '@dynatrace/strato-components-preview';
 import { DotMenuIcon } from '@dynatrace/strato-icons';
 import { CloudType } from '../types/CloudTypes';
 import { OneAgentIcon } from '../icons/OneAgent';
@@ -61,7 +61,12 @@ export const HostsTable = ({ type }: HostTableProps) => {
   );
 
   if (isLoading) {
-    return <LoadingIndicator />;
+    return (
+      <ProgressCircle
+        size="small"
+        /*TODO: Add a meaningful aria-label for the ProgressCircle element.*/
+        aria-label="Description of the ProgressCircle." />
+    );
   }
 
   if (isError) {
