@@ -1,7 +1,7 @@
 import React from 'react';
 import { CloudType } from '../../types/CloudTypes';
 import { useHostsStatus } from '../../hooks/useHostsStatus';
-import { LoadingIndicator, Text } from '@dynatrace/strato-components-preview';
+import { ProgressCircle, Text } from '@dynatrace/strato-components-preview';
 import { ErrorIcon, SyncDoneIcon, SyncOffIcon } from '@dynatrace/strato-icons';
 import { Indicator } from '../Indicator';
 import { useOneAgentHosts } from 'src/app/hooks/useOneAgentHosts';
@@ -14,7 +14,12 @@ export const StatusCell = ({ type }: StatusCellProps) => {
   const { data, isLoading, isError } = useHostsStatus(type);
   const { data: oneagentHosts } = useOneAgentHosts();
 
-  if (isLoading) return <LoadingIndicator />;
+  if (isLoading) return (
+    <ProgressCircle
+      size="small"
+      /*TODO: Add a meaningful aria-label for the ProgressCircle element.*/
+      aria-label="Description of the ProgressCircle." />
+  );
 
   if (isError) return <ErrorIcon />;
 

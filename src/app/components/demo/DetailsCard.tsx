@@ -15,7 +15,14 @@ interface DetailsCardProps {
 
 export const DetailsCard = ({ href, icon, title, text }: DetailsCardProps) => {
   return (
-    <Surface interactive as='a' target='_blank' href={href} rel='noopener noreferrer' padding={8} aria-label='advert'>
+    (<Surface
+
+      as='a'
+      target='_blank'
+      href={href}
+      rel='noopener noreferrer'
+      padding={8}
+      aria-label='advert'>
       <Flex flexDirection='row' alignItems='center' gap={12}>
         <Container as={Flex} flexShrink={0} alignItems='center' justifyContent='center'>
           {icon}
@@ -26,6 +33,6 @@ export const DetailsCard = ({ href, icon, title, text }: DetailsCardProps) => {
         </Flex>
         <ExternalLinkIcon />
       </Flex>
-    </Surface>
+    </Surface>)
   );
 };
