@@ -18,7 +18,7 @@ export const AppIntro = () => {
             This app demonstrates
           </Heading>
           <List ordered={false}>
-            <Text>Explore data with Dynatrace Query Langauge (DQL)</Text>
+            <Text>Explore data with Dynatrace Query Language (DQL)</Text>
             <Text>Query the Smartscape topology</Text>
             <Text>Aggregate and visualize the topology data in tables</Text>
             <Text>Add permission scopes</Text>
