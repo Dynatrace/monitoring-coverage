@@ -3,7 +3,6 @@ import { useDemoMode } from './useDemoMode';
 import { Meta } from '../types/Meta';
 import { updateMockData } from '../components/demo/update-mock-data';
 import { functions } from '@dynatrace-sdk/app-utils';
-import { showToast } from '@dynatrace/strato-components-preview';
 import { getSettingsWriterToken } from '../tokens';
 import { ENVIRONMENT_URL } from 'env';
 
@@ -34,7 +33,7 @@ async function fetcher(formData: FormData) {
   const url = `${ENVIRONMENT_URL}api/config/v1/azure/credentials`;
 
   return functions
-    .call('gen-2-proxy', { url, requestInit })
+    .call('gen-2-proxy', { data: { url, requestInit } })
     .then((res) => res.json())
     .then((data) => {
       if (data.error) {

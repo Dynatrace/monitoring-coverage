@@ -19,5 +19,5 @@ const indicatorStateMap: IndicatorStateMap = {
 };
 
 export const Indicator = ({ children, state }: IndicatorProps) => {
-  return <Flex style={{ color: indicatorStateMap[state] }}>{children}</Flex>;
+  return <div style={{ color: indicatorStateMap[state], width:"100%" }}>{children}</div>;
 };

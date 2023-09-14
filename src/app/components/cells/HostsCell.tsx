@@ -12,12 +12,7 @@ type HostsCellProps = {
 export const HostsCell = ({ type }: HostsCellProps) => {
   const { data, isLoading, isError } = useHostsStatus(type);
 
-  if (isLoading) return (
-    <ProgressCircle
-      size="small"
-      /*TODO: Add a meaningful aria-label for the ProgressCircle element.*/
-      aria-label="Description of the ProgressCircle." />
-  );
+  if (isLoading) return <ProgressCircle size='small' aria-label='Loading...' />;
 
   if (isError) return <ErrorIcon />;
 

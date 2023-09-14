@@ -31,11 +31,13 @@ export const App = () => {
       <Page.Main>
         <Flex flexDirection='column' width='100%' gap={24} style={{ overflowX: 'auto' }}>
           {demoMode && <AppIntro />}
-          <div style={{ display: 'block', marginLeft: 'auto', marginRight: 'auto', width: 1280 }}>
+          {/* <div style={{ display: 'block', marginLeft: 'auto', marginRight: 'auto', width: 1280 }}> */}
+          <Flex flex={0} justifyContent='center'>
             <DemoModeProvider demoMode={demoMode}>
               <CloudTable />
             </DemoModeProvider>
-          </div>
+          </Flex>
+          {/* </div> */}
           {demoMode && <WhatsNext />}
         </Flex>
       </Page.Main>

@@ -125,7 +125,7 @@ export const InstallOneAgentModal = ({ modalOpen, onDismiss, ips, cloudType }: I
   };
 
   return (
-    (<Modal title={`Install OneAgents`} show={modalOpen} onDismiss={onDismiss} dismissible={true}>
+    <Modal title={`Install OneAgents`} show={modalOpen} onDismiss={onDismiss} dismissible={true}>
       <Flex flexDirection='column' gap={16}>
         <Flex>
           <OneAgentIcon />
@@ -233,11 +233,7 @@ export const InstallOneAgentModal = ({ modalOpen, onDismiss, ips, cloudType }: I
                     </Button.Prefix>
                     Download
                   </Button>
-                  <ProgressCircle
-
-                    size="small"
-                    /*TODO: Add a meaningful aria-label for the ProgressCircle element.*/
-                    aria-label="Description of the ProgressCircle." />
+                  {downloading && <ProgressCircle size='small' aria-label='Loading...' />}
                 </Flex>
               </FormField>
               <FormField label='Install 1-liner'>
@@ -261,6 +257,6 @@ export const InstallOneAgentModal = ({ modalOpen, onDismiss, ips, cloudType }: I
           )}
         </Flex>
       </Flex>
-    </Modal>)
+    </Modal>
   );
 };
