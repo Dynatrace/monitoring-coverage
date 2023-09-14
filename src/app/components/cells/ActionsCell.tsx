@@ -14,7 +14,7 @@ type ActionsCellProps = {
 
 //Temporary styling until upstream bug fix
 const TMP_BUTTON_TEXT_STYLE = {
-  minWidth: 120,
+  // minWidth: 120,
 };
 
 export const ActionsCell = ({ type, onClick }: ActionsCellProps) => {
