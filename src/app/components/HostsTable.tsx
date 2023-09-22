@@ -1,5 +1,13 @@
 import React, { useMemo, useState } from 'react';
-import { DataTable, Menu, Button, IntentButton, LoadingIndicator, Text } from '@dynatrace/strato-components-preview';
+import {
+  DataTable,
+  Menu,
+  Button,
+  IntentButton,
+  ProgressCircle,
+  Text,
+  TableColumn,
+} from '@dynatrace/strato-components-preview';
 import { DotMenuIcon } from '@dynatrace/strato-icons';
 import { CloudType } from '../types/CloudTypes';
 import { OneAgentIcon } from '../icons/OneAgent';
@@ -14,7 +22,7 @@ export const HostsTable = ({ type }: HostTableProps) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [ips, setIps] = useState('');
 
-  const columns = useMemo(
+  const columns = useMemo<TableColumn[]>(
     () => [
       {
         accessor: 'id',
@@ -28,6 +36,7 @@ export const HostsTable = ({ type }: HostTableProps) => {
       { accessor: 'ipAddress', header: 'IP Address' },
       {
         header: ' ',
+        id: 'ellipsis',
         autoWidth: true,
         cell: ({ row }) => {
           return (
@@ -61,7 +70,7 @@ export const HostsTable = ({ type }: HostTableProps) => {
   );
 
   if (isLoading) {
-    return <LoadingIndicator />;
+    return <ProgressCircle size='small' aria-label='Loading...' />;
   }
 
   if (isError) {

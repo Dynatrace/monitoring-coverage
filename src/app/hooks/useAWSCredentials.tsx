@@ -46,7 +46,7 @@ async function fetcher(formData: FormData) {
   const url = `${ENVIRONMENT_URL}api/config/v1/aws/credentials`;
 
   return functions
-    .call('gen-2-proxy', { url, requestInit })
+    .call('gen-2-proxy', { data: { url, requestInit } })
     .then((res) => res.json())
     .then((data) => {
       if (data.error) {

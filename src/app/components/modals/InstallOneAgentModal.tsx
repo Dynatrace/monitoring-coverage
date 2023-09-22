@@ -7,7 +7,7 @@ import {
   SelectOption,
   Button,
   SelectedKeys,
-  LoadingIndicator,
+  ProgressCircle,
   TextInput,
   TextArea,
   Text,
@@ -233,7 +233,7 @@ export const InstallOneAgentModal = ({ modalOpen, onDismiss, ips, cloudType }: I
                     </Button.Prefix>
                     Download
                   </Button>
-                  <LoadingIndicator loading={downloading} />
+                  {downloading && <ProgressCircle size='small' aria-label='Loading...' />}
                 </Flex>
               </FormField>
               <FormField label='Install 1-liner'>

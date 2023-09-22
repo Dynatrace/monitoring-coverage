@@ -5,6 +5,7 @@ import {
   Button,
   TableColumn,
   Menu,
+  TABLE_EXPANDABLE_DEFAULT_COLUMN,
 } from '@dynatrace/strato-components-preview';
 import { SyncIcon, DotMenuIcon } from '@dynatrace/strato-icons';
 import Spacings from '@dynatrace/strato-design-tokens/spacings';
@@ -35,9 +36,12 @@ export const CloudTable = () => {
 
   const columns = useMemo<TableColumn[]>(
     () => [
+      { ...TABLE_EXPANDABLE_DEFAULT_COLUMN, maxWidth: 40, autoWidth: true },
       {
         header: 'Cloud provider',
-        width: 170,
+        id: 'cloud',
+        width: 190,
+        autoWidth: true,
         cell: ({ row }) => {
           return (
             <Flex>
@@ -49,14 +53,18 @@ export const CloudTable = () => {
       },
       {
         header: 'Cloud status',
-        width: 100,
+        id: 'status',
+        width: 130,
+        autoWidth: true,
         cell: ({ row }) => {
           return <StatusCell type={row.original.cloudType} />;
         },
       },
       {
         header: 'Cloud hosts',
-        width: 100,
+        id: 'hosts',
+        minWidth: 100,
+        autoWidth: true,
         alignment: 'right',
         cell: ({ row }) => {
           return <HostsCell type={row.original.cloudType} />;
@@ -66,30 +74,37 @@ export const CloudTable = () => {
         accessor: 'oneagentHosts',
         header: 'OneAgent hosts',
         alignment: 'right',
-        width: 100,
+        minWidth: 140,
+        autoWidth: true,
         cell: ({ row }) => {
           return <OneAgentHostsCell type={row.original.cloudType} />;
         },
       },
       {
         header: 'OneAgent coverage',
+        id: 'coverage',
         alignment: 'right',
-        width: 120,
+        minWidth: 120,
+        autoWidth: true,
         cell: ({ row }) => {
           return <OneAgentCoverageCell type={row.original.cloudType} />;
         },
       },
       {
         header: 'Priority',
-        width: 100,
+        id: 'priority',
+        minWidth: 100,
+        autoWidth: true,
         cell: ({ row }) => {
           return <PriorityCell type={row.original.cloudType} />;
         },
       },
       {
         header: 'Actions',
+        id: 'actions',
         alignment: 'center',
-        width: 160,
+        width: 180,
+        autoWidth: true,
         cell: ({ row }) => {
           return (
             <ActionsCell
@@ -104,8 +119,12 @@ export const CloudTable = () => {
       },
       {
         header: ' ',
+        id: 'ellipsis',
         alignment: 'center',
         width: 40,
+        maxWidth: 40,
+        minWidth: 40,
+        autoWidth: true,
         cell: ({ row }) => {
           return (
             <Menu>
@@ -153,7 +172,7 @@ export const CloudTable = () => {
       <DataTable
         columns={columns}
         data={CLOUDS}
-        fullWidth
+        // fullWidth
         variant={{
           contained: true,
           rowSeparation: 'horizontalDividers',
