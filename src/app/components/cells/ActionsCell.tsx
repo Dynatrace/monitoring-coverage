@@ -12,11 +12,6 @@ type ActionsCellProps = {
   onClick: (value: 'install-oneagents' | 'connect-cloud') => void;
 };
 
-//Temporary styling until upstream bug fix
-const TMP_BUTTON_TEXT_STYLE = {
-  // minWidth: 120,
-};
-
 export const ActionsCell = ({ type, onClick }: ActionsCellProps) => {
   const status = useHostsStatus(type);
   const oneagent = useOneAgentHosts();
@@ -36,7 +31,7 @@ export const ActionsCell = ({ type, onClick }: ActionsCellProps) => {
         <Button.Prefix>
           <SyncIcon />
         </Button.Prefix>
-        <div style={TMP_BUTTON_TEXT_STYLE}>Connect cloud</div>
+        <>Connect cloud</>
       </Button>
     );
   }
@@ -46,7 +41,7 @@ export const ActionsCell = ({ type, onClick }: ActionsCellProps) => {
         <Button.Prefix>
           <OneAgentIcon />
         </Button.Prefix>
-        <div style={TMP_BUTTON_TEXT_STYLE}>Install OneAgents</div>
+        <>Install OneAgents</>
       </Button>
     );
   }

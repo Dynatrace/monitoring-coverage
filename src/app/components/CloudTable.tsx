@@ -172,7 +172,6 @@ export const CloudTable = () => {
       <DataTable
         columns={columns}
         data={CLOUDS}
-        // fullWidth
         variant={{
           contained: true,
           rowSeparation: 'horizontalDividers',
