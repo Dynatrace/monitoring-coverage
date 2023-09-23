@@ -9,29 +9,27 @@ import {
   SelectedKeys,
   ProgressCircle,
   TextInput,
-  TextArea,
   Text,
   Hint,
   ProgressBar,
+  CodeSnippet,
 } from '@dynatrace/strato-components-preview';
 import {
   GetAgentInstallerMetaInfoPathOsType,
   GetAgentInstallerMetaInfoPathInstallerType,
   GetAgentInstallerMetaInfoQueryArch,
 } from '@dynatrace-sdk/client-classic-environment-v1';
-import { DownloadIcon, UnfoldMoreIcon, UnfoldLessIcon } from '@dynatrace/strato-icons';
+import { DownloadIcon, UnfoldMoreIcon, UnfoldLessIcon, ArrowRightIcon, CheckmarkIcon } from '@dynatrace/strato-icons';
+import Colors from '@dynatrace/strato-design-tokens/colors';
 import { GEN2URL } from '../../constants';
 import { useDemoMode } from '../../hooks/useDemoMode';
 import { useOneAgentInstallerMeta } from '../../hooks/useOneAgentInstallerMetaInfo';
 import { useDownloadOneAgent } from '../../hooks/useDownloadOneAgent';
 import { useInstallerDownloadToken } from '../../hooks/useInstallerDownloadToken';
-import { CopyButton } from '../CopyButton';
 import { OneAgentIcon } from '../../icons/OneAgent';
 import { useQueryClient } from '@tanstack/react-query';
 import { CloudType } from 'src/app/types/CloudTypes';
 import { updateMockHosts } from '../demo/update-mock-hosts';
-
-const TEXTCOLS = 120;
 
 type InstallOneagentModalProps = {
   modalOpen: boolean;
@@ -46,6 +44,7 @@ export const InstallOneAgentModal = ({ modalOpen, onDismiss, ips, cloudType }: I
 
   //visual states
   const [optionsOpen, setOptionsOpen] = useState(false);
+  const [sectionsCopied, setSectionsCopied] = useState<string[]>([]);
   //form states
   const [mode, setMode] = useState<SelectedKeys>(['infrastructure']);
   const [installerType, setInstallerType] = useState<SelectedKeys>(['default']);
@@ -124,6 +123,29 @@ export const InstallOneAgentModal = ({ modalOpen, onDismiss, ips, cloudType }: I
     }
   };
 
+  const attentionLabel = (text: string) => {
+    if (!sectionsCopied.includes(text)) {
+      return (
+        <Flex flexDirection='row' style={{ color: Colors.Text.Primary.Default }}>
+          <ArrowRightIcon /> {text}
+        </Flex>
+      );
+    } else {
+      return (
+        <Flex flexDirection='row' alignContent='baseline' style={{ color: Colors.Text.Success.Default }}>
+          <CheckmarkIcon /> {text}
+        </Flex>
+      );
+    }
+  };
+
+  const onCopiedSection = (text: string) => {
+    setSectionsCopied((oldval: string[]) => {
+      if (oldval.includes(text)) return oldval;
+      return [...oldval, text];
+    });
+  };
+
   return (
     <Modal title={`Install OneAgents`} show={modalOpen} onDismiss={onDismiss} dismissible={true}>
       <Flex flexDirection='column' gap={16}>
@@ -134,9 +156,15 @@ export const InstallOneAgentModal = ({ modalOpen, onDismiss, ips, cloudType }: I
 
         {/* Step 1 - Copy IP list */}
         <Flex flexDirection='row'>
-          <FormField label='IP list'>
-            <TextArea readOnly rows={3} cols={TEXTCOLS} key={ips} defaultValue={ips} />
-            <CopyButton contentToCopy={ips} />
+          <FormField label={attentionLabel('IP list')}>
+            <CodeSnippet
+              showLineNumbers={false}
+              lineBreaks={true}
+              maxHeight={200}
+              onCopy={() => onCopiedSection('IP list')}
+            >
+              {ips}
+            </CodeSnippet>
           </FormField>
         </Flex>
 
@@ -213,19 +241,20 @@ export const InstallOneAgentModal = ({ modalOpen, onDismiss, ips, cloudType }: I
             </ProgressBar>
           ) : (
             <>
-              <FormField label='Get OneAgent'>
-                <TextArea
-                  readOnly
-                  rows={2}
-                  cols={TEXTCOLS}
-                  key={dl1Liner}
-                  defaultValue={isInstallerMetaError ? '' : dl1Liner}
-                />
+              <FormField label={attentionLabel('Get OneAgent')}>
+                <CodeSnippet
+                  showLineNumbers={false}
+                  language='bash'
+                  lineBreaks={true}
+                  maxHeight={200}
+                  onCopy={() => onCopiedSection('Get OneAgent')}
+                >
+                  {isInstallerMetaError ? '' : dl1Liner}
+                </CodeSnippet>
                 {isInstallerMetaError ? (
                   <Hint hasError={isInstallerMetaError}>There was an error obtaining the agent information.</Hint>
                 ) : null}
-                <Flex flexDirection='row' gap={12} alignItems='center'>
-                  <CopyButton contentToCopy={dl1Liner} />
+                <Flex flexDirection='row' gap={12} alignItems='center' mb={12}>
                   <Text>or</Text>
                   <Button disabled={downloading} onClick={() => downloadOneAgent(downloadConfig)}>
                     <Button.Prefix>
@@ -236,22 +265,23 @@ export const InstallOneAgentModal = ({ modalOpen, onDismiss, ips, cloudType }: I
                   {downloading && <ProgressCircle size='small' aria-label='Loading...' />}
                 </Flex>
               </FormField>
-              <FormField label='Install 1-liner'>
-                <TextArea
-                  readOnly
-                  rows={2}
-                  cols={TEXTCOLS}
-                  key={install1Liner}
-                  value={isInstallerMetaError ? '' : install1Liner}
-                  onChange={() => {
-                    return;
+              <FormField label={attentionLabel('Install 1-liner')}>
+                <CodeSnippet
+                  showLineNumbers={false}
+                  language='bash'
+                  lineBreaks={true}
+                  maxHeight={200}
+                  onCopy={() => {
+                    onCopiedSection('Install 1-liner');
+                    installOneAgentHosts();
                   }}
-                />
+                >
+                  {isInstallerMetaError ? '' : install1Liner}
+                </CodeSnippet>
 
                 {isInstallerMetaError ? (
                   <Hint hasError={isInstallerMetaError}>There was an error obtaining the agent information.</Hint>
                 ) : null}
-                <CopyButton contentToCopy={install1Liner} onCopy={installOneAgentHosts} />
               </FormField>
             </>
           )}
