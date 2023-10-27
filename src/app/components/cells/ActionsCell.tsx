@@ -31,7 +31,7 @@ export const ActionsCell = ({ type, onClick }: ActionsCellProps) => {
         <Button.Prefix>
           <SyncIcon />
         </Button.Prefix>
-        <>Connect cloud</>
+        Connect cloud
       </Button>
     );
   }
@@ -41,7 +41,7 @@ export const ActionsCell = ({ type, onClick }: ActionsCellProps) => {
         <Button.Prefix>
           <OneAgentIcon />
         </Button.Prefix>
-        <>Install OneAgents</>
+        Install OneAgents
       </Button>
     );
   }

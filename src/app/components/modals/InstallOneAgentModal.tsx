@@ -19,8 +19,7 @@ import {
   GetAgentInstallerMetaInfoPathInstallerType,
   GetAgentInstallerMetaInfoQueryArch,
 } from '@dynatrace-sdk/client-classic-environment-v1';
-import { DownloadIcon, UnfoldMoreIcon, UnfoldLessIcon, ArrowRightIcon, CheckmarkIcon } from '@dynatrace/strato-icons';
-import Colors from '@dynatrace/strato-design-tokens/colors';
+import { DownloadIcon, UnfoldMoreIcon, UnfoldLessIcon } from '@dynatrace/strato-icons';
 import { GEN2URL } from '../../constants';
 import { useDemoMode } from '../../hooks/useDemoMode';
 import { useOneAgentInstallerMeta } from '../../hooks/useOneAgentInstallerMetaInfo';
@@ -30,6 +29,7 @@ import { OneAgentIcon } from '../../icons/OneAgent';
 import { useQueryClient } from '@tanstack/react-query';
 import { CloudType } from 'src/app/types/CloudTypes';
 import { updateMockHosts } from '../demo/update-mock-hosts';
+import { AttentionLabel } from '../AttentionLabel';
 
 type InstallOneagentModalProps = {
   modalOpen: boolean;
@@ -123,22 +123,6 @@ export const InstallOneAgentModal = ({ modalOpen, onDismiss, ips, cloudType }: I
     }
   };
 
-  const attentionLabel = (text: string) => {
-    if (!sectionsCopied.includes(text)) {
-      return (
-        <Flex flexDirection='row' style={{ color: Colors.Text.Primary.Default }}>
-          <ArrowRightIcon /> {text}
-        </Flex>
-      );
-    } else {
-      return (
-        <Flex flexDirection='row' alignContent='baseline' style={{ color: Colors.Text.Success.Default }}>
-          <CheckmarkIcon /> {text}
-        </Flex>
-      );
-    }
-  };
-
   const onCopiedSection = (text: string) => {
     setSectionsCopied((oldval: string[]) => {
       if (oldval.includes(text)) return oldval;
@@ -156,7 +140,7 @@ export const InstallOneAgentModal = ({ modalOpen, onDismiss, ips, cloudType }: I
 
         {/* Step 1 - Copy IP list */}
         <Flex flexDirection='row'>
-          <FormField label={attentionLabel('IP list')}>
+          <FormField label={<AttentionLabel sectionsCopied={sectionsCopied} text='IP list' />}>
             <CodeSnippet
               showLineNumbers={false}
               lineBreaks={true}
@@ -241,7 +225,7 @@ export const InstallOneAgentModal = ({ modalOpen, onDismiss, ips, cloudType }: I
             </ProgressBar>
           ) : (
             <>
-              <FormField label={attentionLabel('Get OneAgent')}>
+              <FormField label={<AttentionLabel sectionsCopied={sectionsCopied} text='Get OneAgent' />}>
                 <CodeSnippet
                   showLineNumbers={false}
                   language='bash'
@@ -265,7 +249,7 @@ export const InstallOneAgentModal = ({ modalOpen, onDismiss, ips, cloudType }: I
                   {downloading && <ProgressCircle size='small' aria-label='Loading...' />}
                 </Flex>
               </FormField>
-              <FormField label={attentionLabel('Install 1-liner')}>
+              <FormField label={<AttentionLabel sectionsCopied={sectionsCopied} text='Install 1-liner' />}>
                 <CodeSnippet
                   showLineNumbers={false}
                   language='bash'
