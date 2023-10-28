@@ -27,19 +27,24 @@ export const HostsTable = ({ type }: HostTableProps) => {
       {
         accessor: 'id',
         header: 'Entity ID',
+        ratioWidth: 1,
         cell: ({ row }) => {
           return <IntentButton payload={{ 'dt.entity.host': row.original.id }}>{row.original.id}</IntentButton>;
         },
       },
-      { accessor: "'entity.name'", header: 'Entity Name' },
-      { accessor: "'entity.detected_name'", header: 'Detected Name' },
-      { accessor: 'ipAddress', header: 'IP Address' },
+      { accessor: "'entity.name'", header: 'Entity Name', ratioWidth: 1, },
+      { accessor: "'entity.detected_name'", header: 'Detected Name', ratioWidth: 1, },
+      { accessor: 'ipAddress', header: 'IP Address', ratioWidth: 0.6, },
       {
         header: ' ',
         id: 'ellipsis',
+        width: 40,
+        maxWidth: 40,
+        minWidth: 40,
         autoWidth: true,
         cell: ({ row }) => {
           return (
+            <DataTable.Cell>
             <Menu>
               <Menu.Trigger>
                 <Button aria-label='Open options menu.'>
@@ -61,7 +66,7 @@ export const HostsTable = ({ type }: HostTableProps) => {
                   Install OneAgent
                 </Menu.Item>
               </Menu.Content>
-            </Menu>
+            </Menu></DataTable.Cell>
           );
         },
       },
