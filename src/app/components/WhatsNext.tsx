@@ -15,13 +15,13 @@ export const WhatsNext = () => {
       paddingX={16}
       alignSelf='center'
     >
-      <Flex flexDirection='column' alignItems='left' gap={4}>
+      <Flex flexDirection='column' alignItems='start' gap={4}>
         <Heading as='h2' level={6}>
           What&apos;s next?
         </Heading>
         <Paragraph>Fork this app on GitHub and learn how to write apps for Dynatrace.</Paragraph>
       </Flex>
-      <Flex alignItems='right'>
+      <Flex alignItems='end'>
         <ExternalLink href='https://github.com/Dynatrace/monitoring-coverage'>Fork on Github</ExternalLink>
       </Flex>
     </Container>
