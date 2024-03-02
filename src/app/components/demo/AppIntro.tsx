@@ -6,7 +6,7 @@ export const AppIntro = () => {
     <Flex flexDirection='row' gap={16} width={980} alignSelf='center'>
       <Flex flexDirection='column'>
         <Flex gap={4} flexDirection='column'>
-          <Heading as='h1'>Monitoring Coverage</Heading>
+          <Heading as='h1'>Monitoring Coverage Sample</Heading>
           <Paragraph>
             Visualize monitoring coverage by Dynatrace across the user's entire estate and take action to get to 100%
             quickly. In this sample app, you'll learn how to use the Smartscape topology queries, which you can use to
