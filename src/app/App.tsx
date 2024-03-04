@@ -1,6 +1,6 @@
 import { ToastContainer, Page, AppHeader, Flex } from '@dynatrace/strato-components-preview';
 import React, { useState } from 'react';
-import { FavouriteIcon, UnfavouriteIcon } from '@dynatrace/strato-icons';
+import { FavoriteIcon, UnfavoriteIcon } from '@dynatrace/strato-icons';
 import { WhatsNext } from './components/WhatsNext';
 import { DemoModeProvider } from './hooks/useDemoMode';
 import { AppIntro } from './components/demo/AppIntro';
@@ -18,7 +18,7 @@ export const App = () => {
           <AppHeader.ActionItems>
             <AppHeader.ActionButton
               isSelected
-              prefixIcon={!demoMode ? <FavouriteIcon /> : <UnfavouriteIcon />}
+              prefixIcon={!demoMode ? <FavoriteIcon /> : <UnfavoriteIcon />}
               onClick={() => {
                 setDemoMode((oldval) => !oldval);
               }}
@@ -31,11 +31,11 @@ export const App = () => {
       <Page.Main>
         <Flex flexDirection='column' width='100%' gap={24} style={{ overflowX: 'auto' }}>
           {demoMode && <AppIntro />}
-          <div style={{ display: 'block', marginLeft: 'auto', marginRight: 'auto', width: 1280 }}>
+          <Flex flex={0} justifyContent='center'>
             <DemoModeProvider demoMode={demoMode}>
               <CloudTable />
             </DemoModeProvider>
-          </div>
+          </Flex>
           {demoMode && <WhatsNext />}
         </Flex>
       </Page.Main>

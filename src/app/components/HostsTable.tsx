@@ -1,5 +1,13 @@
 import React, { useMemo, useState } from 'react';
-import { DataTable, Menu, Button, IntentButton, LoadingIndicator, Text } from '@dynatrace/strato-components-preview';
+import {
+  DataTable,
+  Menu,
+  Button,
+  IntentButton,
+  ProgressCircle,
+  Text,
+  TableColumn,
+} from '@dynatrace/strato-components-preview';
 import { DotMenuIcon } from '@dynatrace/strato-icons';
 import { CloudType } from '../types/CloudTypes';
 import { OneAgentIcon } from '../icons/OneAgent';
@@ -14,23 +22,29 @@ export const HostsTable = ({ type }: HostTableProps) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [ips, setIps] = useState('');
 
-  const columns = useMemo(
+  const columns = useMemo<TableColumn[]>(
     () => [
       {
         accessor: 'id',
         header: 'Entity ID',
+        ratioWidth: 1,
         cell: ({ row }) => {
           return <IntentButton payload={{ 'dt.entity.host': row.original.id }}>{row.original.id}</IntentButton>;
         },
       },
-      { accessor: "'entity.name'", header: 'Entity Name' },
-      { accessor: "'entity.detected_name'", header: 'Detected Name' },
-      { accessor: 'ipAddress', header: 'IP Address' },
+      { accessor: "'entity.name'", header: 'Entity Name', ratioWidth: 1, },
+      { accessor: "'entity.detected_name'", header: 'Detected Name', ratioWidth: 1, },
+      { accessor: 'ipAddress', header: 'IP Address', ratioWidth: 0.6, },
       {
         header: ' ',
+        id: 'ellipsis',
+        width: 40,
+        maxWidth: 40,
+        minWidth: 40,
         autoWidth: true,
         cell: ({ row }) => {
           return (
+            <DataTable.Cell>
             <Menu>
               <Menu.Trigger>
                 <Button aria-label='Open options menu.'>
@@ -52,7 +66,7 @@ export const HostsTable = ({ type }: HostTableProps) => {
                   Install OneAgent
                 </Menu.Item>
               </Menu.Content>
-            </Menu>
+            </Menu></DataTable.Cell>
           );
         },
       },
@@ -61,7 +75,7 @@ export const HostsTable = ({ type }: HostTableProps) => {
   );
 
   if (isLoading) {
-    return <LoadingIndicator />;
+    return <ProgressCircle size='small' aria-label='Loading...' />;
   }
 
   if (isError) {

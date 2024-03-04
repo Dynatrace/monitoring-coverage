@@ -6,7 +6,7 @@ const config: CliOptions = {
   icon: './src/assets/logo.png',
   app: {
     name: 'Monitoring Coverage Sample',
-    version: '0.0.17',
+    version: '0.0.20',
     description: 'A sample app helping you get to 100% cloud coverage',
     id: 'my.monitoring.coverage',
     scopes: [

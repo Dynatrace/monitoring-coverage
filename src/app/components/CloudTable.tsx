@@ -5,6 +5,7 @@ import {
   Button,
   TableColumn,
   Menu,
+  TABLE_EXPANDABLE_DEFAULT_COLUMN,
 } from '@dynatrace/strato-components-preview';
 import { SyncIcon, DotMenuIcon } from '@dynatrace/strato-icons';
 import Spacings from '@dynatrace/strato-design-tokens/spacings';
@@ -35,112 +36,159 @@ export const CloudTable = () => {
 
   const columns = useMemo<TableColumn[]>(
     () => [
+      { ...TABLE_EXPANDABLE_DEFAULT_COLUMN, maxWidth: 40, autoWidth: true },
       {
         header: 'Cloud provider',
-        width: 170,
+        id: 'cloud',
+        width: 190,
+        autoWidth: true,
         cell: ({ row }) => {
           return (
-            <Flex>
-              <img src={`./assets/${row.original.icon}`} style={{ height: Spacings.Size20, width: Spacings.Size20 }} />
-              <span>{row.original.cloud}</span>
-            </Flex>
+            <DataTable.Cell>
+              <Flex>
+                <img
+                  src={`./assets/${row.original.icon}`}
+                  style={{ height: Spacings.Size20, width: Spacings.Size20 }}
+                />
+                <span>{row.original.cloud}</span>
+              </Flex>
+            </DataTable.Cell>
           );
         },
       },
       {
         header: 'Cloud status',
-        width: 100,
+        id: 'status',
+        width: 130,
+        autoWidth: true,
         cell: ({ row }) => {
-          return <StatusCell type={row.original.cloudType} />;
+          return (
+            <DataTable.Cell>
+              <StatusCell type={row.original.cloudType} />
+            </DataTable.Cell>
+          );
         },
       },
       {
         header: 'Cloud hosts',
-        width: 100,
+        id: 'hosts',
+        minWidth: 100,
+        autoWidth: true,
         alignment: 'right',
         cell: ({ row }) => {
-          return <HostsCell type={row.original.cloudType} />;
+          return (
+            <DataTable.Cell>
+              <HostsCell type={row.original.cloudType} />
+            </DataTable.Cell>
+          );
         },
       },
       {
         accessor: 'oneagentHosts',
         header: 'OneAgent hosts',
         alignment: 'right',
-        width: 100,
+        minWidth: 140,
+        autoWidth: true,
         cell: ({ row }) => {
-          return <OneAgentHostsCell type={row.original.cloudType} />;
+          return (
+            <DataTable.Cell>
+              <OneAgentHostsCell type={row.original.cloudType} />
+            </DataTable.Cell>
+          );
         },
       },
       {
         header: 'OneAgent coverage',
+        id: 'coverage',
         alignment: 'right',
-        width: 120,
+        minWidth: 120,
+        autoWidth: true,
         cell: ({ row }) => {
-          return <OneAgentCoverageCell type={row.original.cloudType} />;
+          return (
+            <DataTable.Cell>
+              <OneAgentCoverageCell type={row.original.cloudType} />
+            </DataTable.Cell>
+          );
         },
       },
       {
         header: 'Priority',
-        width: 100,
+        id: 'priority',
+        minWidth: 100,
+        autoWidth: true,
         cell: ({ row }) => {
-          return <PriorityCell type={row.original.cloudType} />;
+          return (
+            <DataTable.Cell>
+              <PriorityCell type={row.original.cloudType} />
+            </DataTable.Cell>
+          );
         },
       },
       {
         header: 'Actions',
+        id: 'actions',
         alignment: 'center',
-        width: 160,
+        width: 190,
+        autoWidth: true,
         cell: ({ row }) => {
           return (
-            <ActionsCell
-              type={row.original.cloudType}
-              onClick={(action) => {
-                setSelectedCloud(row.original);
-                setModalOpen(action);
-              }}
-            />
+            <DataTable.Cell>
+              <ActionsCell
+                type={row.original.cloudType}
+                onClick={(action) => {
+                  setSelectedCloud(row.original);
+                  setModalOpen(action);
+                }}
+              />
+            </DataTable.Cell>
           );
         },
       },
       {
         header: ' ',
+        id: 'ellipsis',
         alignment: 'center',
         width: 40,
+        maxWidth: 40,
+        minWidth: 40,
+        autoWidth: true,
         cell: ({ row }) => {
           return (
-            <Menu>
-              <Menu.Trigger>
-                <Button aria-label='Open options menu.'>
-                  <Button.Prefix>
-                    <DotMenuIcon />
-                  </Button.Prefix>
-                </Button>
-              </Menu.Trigger>
-              <Menu.Content>
-                <Menu.Item
-                  onSelect={() => {
-                    setSelectedCloud(row.original);
-                    setModalOpen('connect-cloud');
-                  }}
-                >
-                  <Menu.ItemIcon>
-                    <SyncIcon />
-                  </Menu.ItemIcon>
-                  Connect additional cloud
-                </Menu.Item>
-                <Menu.Item
-                  onSelect={() => {
-                    setSelectedCloud(row.original);
-                    setModalOpen('install-oneagents');
-                  }}
-                >
-                  <Menu.ItemIcon>
-                    <OneAgentIcon />
-                  </Menu.ItemIcon>
-                  Install OneAgents
-                </Menu.Item>
-              </Menu.Content>
-            </Menu>
+            <DataTable.Cell>
+              <Menu>
+                <Menu.Trigger>
+                  <Button aria-label='Open options menu.'>
+                    <Button.Prefix>
+                      <DotMenuIcon />
+                    </Button.Prefix>
+                  </Button>
+                </Menu.Trigger>
+                <Menu.Content>
+                  <Menu.Item
+                    onSelect={() => {
+                      setSelectedCloud(row.original);
+                      setModalOpen('connect-cloud');
+                    }}
+                  >
+                    <Menu.ItemIcon>
+                      <SyncIcon />
+                    </Menu.ItemIcon>
+                    Connect additional cloud
+                  </Menu.Item>
+                  <Menu.Item
+                    onSelect={() => {
+                      setSelectedCloud(row.original);
+                      setModalOpen('install-oneagents');
+                    }}
+                  >
+                    <Menu.ItemIcon>
+                      <OneAgentIcon />
+                    </Menu.ItemIcon>
+                    Install OneAgents
+                  </Menu.Item>
+                </Menu.Content>
+              </Menu>
+            </DataTable.Cell>
           );
         },
       },
@@ -153,7 +201,6 @@ export const CloudTable = () => {
       <DataTable
         columns={columns}
         data={CLOUDS}
-        fullWidth
         variant={{
           contained: true,
           rowSeparation: 'horizontalDividers',

@@ -79,10 +79,10 @@ export const ConnectAWSModal = ({ modalOpen, onDismiss, selectedCloud }: Connect
                 </SelectOption>
               </Select>
               <FormField label='Access Key ID' required>
-                <TextInput placeholder='Access key' name='accessKeyId' required />
+                <TextInput placeholder='Access key' name='accessKeyId' />
               </FormField>
               <FormField label='Secret access key' required>
-                <PasswordInput placeholder='Secret key' name='secretKeyId' required />
+                <PasswordInput placeholder='Secret key' name='secretKeyId' />
               </FormField>
             </Flex>
           ) : (
